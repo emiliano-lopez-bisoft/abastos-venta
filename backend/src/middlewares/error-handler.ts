@@ -1,5 +1,5 @@
-import type { ErrorRequestHandler } from 'express';
-import { ZodError, z } from 'zod';
+import type { ErrorRequestHandler } from "express";
+import { ZodError, z } from "zod";
 
 /** Error de negocio con código HTTP (ej. "no hay cajas suficientes" → 409). */
 export class AppError extends Error {
@@ -13,7 +13,13 @@ export class AppError extends Error {
 
 export const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
   if (err instanceof ZodError) {
-    res.status(400).json({ mensaje: 'Datos inválidos', errores: z.flattenError(err).fieldErrors });
+    const { formErrors, fieldErrors } = z.flattenError(err);
+    res
+      .status(400)
+      .json({
+        mensaje: formErrors[0] ?? "Datos inválidos",
+        errores: fieldErrors,
+      });
     return;
   }
   if (err instanceof AppError) {
@@ -21,5 +27,5 @@ export const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
     return;
   }
   console.error(err);
-  res.status(500).json({ mensaje: 'Error interno del servidor' });
+  res.status(500).json({ mensaje: "Error interno del servidor" });
 };

@@ -1,0 +1,51 @@
+@api = http://localhost:3000/api
+
+### Crear trailer con su manifiesto
+POST {{api}}/trailers
+Content-Type: application/json
+
+{
+  "placa": "ABC-123",
+  "numero": "T-45",
+  "invernadero": "Los Pinos",
+  "chofer": "Ramiro",
+  "anden": "12",
+  "costoAnden": 1500,
+  "manifiesto": [
+    { "producto": "Morrón", "color": "Rojo", "tamano": "Grande", "cajas": 300 },
+    { "producto": "Morrón", "color": "Amarillo", "tamano": "Mediano", "cajas": 200 }
+  ]
+}
+
+### Listar trailers activos (con cajas vendidas y disponibles)
+GET {{api}}/trailers?estado=ACTIVO
+
+### Detalle de un trailer
+GET {{api}}/trailers/1
+
+### Corregir datos generales
+PATCH {{api}}/trailers/1
+Content-Type: application/json
+
+{ "anden": "14", "costoAnden": 1800 }
+
+### Agregar una línea al manifiesto
+POST {{api}}/trailers/1/manifiesto
+Content-Type: application/json
+
+{ "producto": "Morrón", "color": "Naranja", "tamano": "Chico", "cajas": 50 }
+
+### Corregir una línea del manifiesto
+PATCH {{api}}/trailers/1/manifiesto/3
+Content-Type: application/json
+
+{ "cajas": 60 }
+
+### Eliminar una línea (solo si no tiene ventas)
+DELETE {{api}}/trailers/1/manifiesto/3
+
+### Cerrar trailer
+POST {{api}}/trailers/1/cerrar
+
+### Reabrir trailer
+POST {{api}}/trailers/1/reabrir
