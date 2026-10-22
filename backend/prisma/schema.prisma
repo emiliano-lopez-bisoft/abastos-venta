@@ -1,0 +1,87 @@
+generator client {
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "esm"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum EstadoTrailer {
+  ACTIVO
+  CERRADO
+}
+
+enum EstadoTicket {
+  VIGENTE
+  CANCELADO
+}
+
+/// Trailer que llega al andén con mercancía de un invernadero.
+model Trailer {
+  id           Int           @id @default(autoincrement())
+  placa        String
+  numero       String
+  invernadero  String
+  chofer       String
+  anden        String
+  costoAnden   Decimal       @map("costo_anden") @db.Decimal(12, 2)
+  fechaLlegada DateTime      @default(now()) @map("fecha_llegada")
+  estado       EstadoTrailer @default(ACTIVO)
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
+
+  manifiesto ManifiestoDetalle[]
+
+  @@index([fechaLlegada])
+  @@map("trailers")
+}
+
+/// Cada producto/tamaño que trae el trailer. Las ventas apuntan aquí,
+/// así se sabe de qué trailer salió cada caja y cuántas quedan.
+model ManifiestoDetalle {
+  id        Int     @id @default(autoincrement())
+  trailerId Int     @map("trailer_id")
+  producto  String
+  color     String?
+  tamano    String
+  cajas     Int
+
+  trailer Trailer         @relation(fields: [trailerId], references: [id], onDelete: Cascade)
+  ventas  TicketDetalle[]
+
+  @@index([trailerId])
+  @@map("manifiesto_detalle")
+}
+
+/// El id funciona como folio consecutivo del ticket.
+model Ticket {
+  id            Int          @id @default(autoincrement())
+  fecha         DateTime     @default(now())
+  clienteNombre String       @map("cliente_nombre")
+  total         Decimal      @db.Decimal(12, 2)
+  estado        EstadoTicket @default(VIGENTE)
+  createdAt     DateTime     @default(now()) @map("created_at")
+
+  detalles TicketDetalle[]
+
+  @@index([fecha])
+  @@map("tickets")
+}
+
+model TicketDetalle {
+  id                  Int     @id @default(autoincrement())
+  ticketId            Int     @map("ticket_id")
+  manifiestoDetalleId Int     @map("manifiesto_detalle_id")
+  cajas               Int
+  precioCaja          Decimal @map("precio_caja") @db.Decimal(12, 2)
+  subtotal            Decimal @db.Decimal(12, 2)
+
+  ticket            Ticket            @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  manifiestoDetalle ManifiestoDetalle @relation(fields: [manifiestoDetalleId], references: [id], onDelete: Restrict)
+
+  @@index([ticketId])
+  @@index([manifiestoDetalleId])
+  @@map("ticket_detalle")
+}
