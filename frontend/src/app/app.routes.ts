@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
-  { path: '', pathMatch: 'full', redirectTo: 'trailers' },
+  { path: '', pathMatch: 'full', redirectTo: 'vender' },
   {
     path: 'trailers',
     title: 'Trailers',
@@ -13,5 +13,10 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./trailers/nuevo/nuevo-trailer-page').then((m) => m.NuevoTrailerPage),
   },
-  { path: '**', redirectTo: 'trailers' },
+  {
+    path: 'vender',
+    title: 'Nuevo vale',
+    loadComponent: () => import('./vales/nuevo/nuevo-vale-page').then((m) => m.NuevoValePage),
+  },
+  { path: '**', redirectTo: 'vender' },
 ];

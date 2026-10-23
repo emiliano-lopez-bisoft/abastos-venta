@@ -1,3 +1,9 @@
 <main class="contenido">
   <router-outlet />
 </main>
+
+<nav class="navegacion" aria-label="Secciones">
+  @for (s of secciones; track s.ruta) {
+    <a [routerLink]="s.ruta" routerLinkActive="activa" ariaCurrentWhenActive="page">{{ s.texto }}</a>
+  }
+</nav>
