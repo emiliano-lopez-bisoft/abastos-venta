@@ -1,0 +1,38 @@
+@api = http://localhost:3000/api
+
+### Ver trailers activos (para saber los ids de las líneas del manifiesto)
+GET {{api}}/trailers?estado=ACTIVO
+
+### Crear ticket
+# manifiestoDetalleId es el "id" de cada línea dentro de "manifiesto"
+POST {{api}}/tickets
+Content-Type: application/json
+
+{
+  "clienteNombre": "Don Chuy",
+  "lineas": [
+    { "manifiestoDetalleId": 1, "cajas": 10, "precioCaja": 280 },
+    { "manifiestoDetalleId": 2, "cajas": 5, "precioCaja": 310.5 }
+  ]
+}
+
+### Intentar vender más cajas de las que hay (debe responder 409)
+POST {{api}}/tickets
+Content-Type: application/json
+
+{
+  "clienteNombre": "Prueba",
+  "lineas": [{ "manifiestoDetalleId": 1, "cajas": 99999, "precioCaja": 280 }]
+}
+
+### Tickets de hoy
+GET {{api}}/tickets
+
+### Tickets vigentes de un día específico
+GET {{api}}/tickets?fecha=2026-10-23&estado=VIGENTE
+
+### Detalle de un ticket
+GET {{api}}/tickets/1
+
+### Cancelar ticket (las cajas vuelven a quedar disponibles)
+POST {{api}}/tickets/1/cancelar
