@@ -62,6 +62,9 @@ function aDto(
     chofer: t.chofer,
     anden: t.anden,
     costoAnden: aNumero(t.costoAnden),
+    flete: aNumero(t.flete),
+    descarga: aNumero(t.descarga),
+    comisionPorcentaje: aNumero(t.comisionPorcentaje),
     fechaLlegada: t.fechaLlegada.toISOString(),
     estado: t.estado,
     manifiesto,
@@ -100,12 +103,22 @@ async function buscarOFallar(id: number): Promise<TrailerConManifiesto> {
 export async function crearTrailer(
   input: CrearTrailerInput,
 ): Promise<TrailerDto> {
-  const { manifiesto, costoAnden, ...datos } = input;
+  const {
+    manifiesto,
+    costoAnden,
+    flete,
+    descarga,
+    comisionPorcentaje,
+    ...datos
+  } = input;
   // El create anidado guarda trailer y manifiesto en una sola transacción.
   const trailer = await prisma.trailer.create({
     data: {
       ...datos,
       costoAnden: aDecimal(costoAnden),
+      flete: aDecimal(flete ?? 0),
+      descarga: aDecimal(descarga ?? 0),
+      comisionPorcentaje: aDecimal(comisionPorcentaje ?? 10),
       manifiesto: { create: manifiesto.map(lineaAData) },
     },
     include: conManifiesto,
@@ -134,12 +147,18 @@ export async function actualizarTrailer(
   input: ActualizarTrailerInput,
 ): Promise<TrailerDto> {
   await buscarOFallar(id);
-  const { costoAnden, ...datos } = input;
+  const { costoAnden, flete, descarga, comisionPorcentaje, ...datos } = input;
   await prisma.trailer.update({
     where: { id },
     data: {
       ...datos,
+      // Solo se actualizan los importes que vienen en la petición.
       ...(costoAnden !== undefined && { costoAnden: aDecimal(costoAnden) }),
+      ...(flete !== undefined && { flete: aDecimal(flete) }),
+      ...(descarga !== undefined && { descarga: aDecimal(descarga) }),
+      ...(comisionPorcentaje !== undefined && {
+        comisionPorcentaje: aDecimal(comisionPorcentaje),
+      }),
     },
   });
   return obtenerTrailer(id);

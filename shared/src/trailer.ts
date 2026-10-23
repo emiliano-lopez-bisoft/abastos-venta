@@ -22,6 +22,15 @@ export const crearTrailerSchema = z.object({
   chofer: texto("El chofer es obligatorio"),
   anden: texto("El andén es obligatorio"),
   costoAnden: importe.nonnegative("El costo de andén no puede ser negativo"),
+  // Opcionales: si no se mandan, el backend usa 0 de flete/descarga y 10 % de comisión.
+  // (No se usa .default() porque en Zod 4 también se aplicaría en el PATCH
+  // y sobrescribiría valores ya guardados).
+  flete: importe.nonnegative("El flete no puede ser negativo").optional(),
+  descarga: importe.nonnegative("La descarga no puede ser negativa").optional(),
+  comisionPorcentaje: importe
+    .min(0, "La comisión no puede ser negativa")
+    .max(100, "La comisión no puede ser mayor a 100 %")
+    .optional(),
   manifiesto: z
     .array(manifiestoLineaSchema)
     .min(1, "Registra al menos un producto del manifiesto"),
@@ -79,6 +88,9 @@ export interface TrailerDto {
   chofer: string;
   anden: string;
   costoAnden: number;
+  flete: number;
+  descarga: number;
+  comisionPorcentaje: number;
   fechaLlegada: string;
   estado: EstadoTrailer;
   manifiesto: ManifiestoLineaDto[];

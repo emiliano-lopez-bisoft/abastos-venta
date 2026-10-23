@@ -1,0 +1,16 @@
+@api = http://localhost:3000/api
+
+### Resumen de hoy
+GET {{api}}/resumen/dia
+
+### Resumen de un día específico
+GET {{api}}/resumen/dia?fecha=2026-10-23
+
+### Liquidación de un trailer (equivalente a la hoja de Excel)
+GET {{api}}/resumen/trailers/1
+
+### Registrar los gastos de un trailer que ya existe
+PATCH {{api}}/trailers/1
+Content-Type: application/json
+
+{ "flete": 50000, "descarga": 2500, "comisionPorcentaje": 10 }

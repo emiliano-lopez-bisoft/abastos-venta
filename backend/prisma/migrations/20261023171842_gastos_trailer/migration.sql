@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "trailers" ADD COLUMN     "comision_porcentaje" DECIMAL(5,2) NOT NULL DEFAULT 10,
+ADD COLUMN     "descarga" DECIMAL(12,2) NOT NULL DEFAULT 0,
+ADD COLUMN     "flete" DECIMAL(12,2) NOT NULL DEFAULT 0;
