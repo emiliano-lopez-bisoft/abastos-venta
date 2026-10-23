@@ -9,3 +9,4 @@ export * from "./dinero.js";
 export * from "./trailer.js";
 export * from "./ticket.js";
 export * from "./resumen.js";
+export * from "./catalogos.js";

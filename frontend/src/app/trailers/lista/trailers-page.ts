@@ -2,7 +2,7 @@ import { DecimalPipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import type { EstadoTrailer, ManifiestoLineaDto, TrailerDto } from '@abastos/shared';
-import { colorDeChile } from '../../core/catalogos';
+import { colorDeChile, nombreProducto } from '../../core/catalogos';
 import { mensajeDeError } from '../../core/errores';
 import { TrailersApi } from '../trailers.api';
 
@@ -38,6 +38,6 @@ export class TrailersPage {
   }
 
   protected nombreLinea(l: ManifiestoLineaDto): string {
-    return [l.producto, l.color].filter(Boolean).join(' ');
+    return nombreProducto(l.producto, l.color);
   }
 }

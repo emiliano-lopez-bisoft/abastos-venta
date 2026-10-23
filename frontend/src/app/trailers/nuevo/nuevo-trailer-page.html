@@ -68,17 +68,26 @@
       <div class="linea" [style.--color-linea]="colorDeChile(linea.color().value())">
         <label class="campo linea__producto">
           <span>Producto</span>
-          <input [formField]="linea.producto" />
-          <app-error-campo [campo]="linea.producto" />
-        </label>
-        <label class="campo">
-          <span>Color</span>
-          <select [formField]="linea.color">
-            @for (c of colores; track c) {
-              <option [value]="c">{{ c }}</option>
+          <select [formField]="linea.producto">
+            @for (p of productos; track p) {
+              <option [value]="p">{{ p }}</option>
             }
           </select>
+          <app-error-campo [campo]="linea.producto" />
         </label>
+        @if (coloresDe(linea.producto().value()); as colores) {
+          @if (colores.length > 0) {
+            <label class="campo" [class.campo--error]="linea.color().touched() && linea.color().invalid()">
+              <span>Color</span>
+              <select [formField]="linea.color">
+                @for (c of colores; track c) {
+                  <option [value]="c">{{ c }}</option>
+                }
+              </select>
+              <app-error-campo [campo]="linea.color" />
+            </label>
+          }
+        }
         <label class="campo" [class.campo--error]="linea.tamano().touched() && linea.tamano().invalid()">
           <span>Tamaño</span>
           <select [formField]="linea.tamano">

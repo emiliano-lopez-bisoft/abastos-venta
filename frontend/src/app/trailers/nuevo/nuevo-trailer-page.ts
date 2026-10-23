@@ -2,9 +2,10 @@ import { DecimalPipe } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormField, form, submit, validateStandardSchema } from '@angular/forms/signals';
 import { Router, RouterLink } from '@angular/router';
-import { crearTrailerSchema } from '@abastos/shared';
-import { COLORES, PRODUCTO_POR_DEFECTO, TAMANOS, colorDeChile } from '../../core/catalogos';
+import { NOMBRES_PRODUCTOS, TAMANOS, coloresDe, crearTrailerSchema } from '@abastos/shared';
+import { colorDeChile } from '../../core/catalogos';
 import { ErrorCampo } from '../../core/error-campo';
+import { esquemaParaBorrador } from '../../core/esquema-borrador';
 import { mensajeDeError } from '../../core/errores';
 import { TrailersApi } from '../trailers.api';
 
@@ -15,14 +16,30 @@ interface LineaForm {
   cajas: number;
 }
 
-const lineaNueva = (anterior?: LineaForm): LineaForm => ({
+interface ModeloTrailer {
+  numero: string;
+  placa: string;
+  invernadero: string;
+  chofer: string;
+  anden: string;
+  costoAnden: number;
+  flete: number;
+  descarga: number;
+  comisionPorcentaje: number;
+  manifiesto: LineaForm[];
+}
+
+function lineaNueva(anterior?: LineaForm): LineaForm {
   // Copia producto y color de la línea anterior: normalmente se capturan
   // varios tamaños seguidos del mismo chile.
-  producto: anterior?.producto ?? PRODUCTO_POR_DEFECTO,
-  color: anterior?.color ?? COLORES[0],
-  tamano: '',
-  cajas: 0,
-});
+  const producto = anterior?.producto ?? NOMBRES_PRODUCTOS[0];
+  return {
+    producto,
+    color: anterior?.color ?? coloresDe(producto)[0] ?? '',
+    tamano: '',
+    cajas: 0,
+  };
+}
 
 @Component({
   selector: 'app-nuevo-trailer-page',
@@ -34,11 +51,12 @@ export class NuevoTrailerPage {
   private readonly api = inject(TrailersApi);
   private readonly router = inject(Router);
 
-  protected readonly colores = COLORES;
+  protected readonly productos = NOMBRES_PRODUCTOS;
   protected readonly tamanos = TAMANOS;
+  protected readonly coloresDe = coloresDe;
   protected readonly colorDeChile = colorDeChile;
 
-  protected readonly modelo = signal({
+  protected readonly modelo = signal<ModeloTrailer>({
     numero: '',
     placa: '',
     invernadero: '',
@@ -53,7 +71,7 @@ export class NuevoTrailerPage {
 
   // Las mismas reglas que valida el backend, tomadas de @abastos/shared.
   protected readonly f = form(this.modelo, (ruta) =>
-    validateStandardSchema(ruta, crearTrailerSchema),
+    validateStandardSchema(ruta, esquemaParaBorrador<ModeloTrailer>(crearTrailerSchema)),
   );
 
   protected readonly totalCajas = computed(() =>
@@ -84,7 +102,8 @@ export class NuevoTrailerPage {
 
     await submit(this.f, async () => {
       try {
-        await this.api.crear(this.modelo());
+        // El formulario ya pasó la validación, así que los datos cumplen el esquema.
+        await this.api.crear(crearTrailerSchema.parse(this.modelo()));
         await this.router.navigate(['/trailers']);
       } catch (error) {
         this.errorServidor.set(mensajeDeError(error));

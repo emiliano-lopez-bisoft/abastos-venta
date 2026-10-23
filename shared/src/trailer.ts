@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { NOMBRES_PRODUCTOS, TAMANOS, errorDeColor } from "./catalogos.js";
 import { cajas, importe } from "./dinero.js";
 
 const texto = (mensaje: string) => z.string().trim().min(1, mensaje);
@@ -8,12 +9,20 @@ export type EstadoTrailer = z.infer<typeof estadoTrailerSchema>;
 
 // ---------- Entradas ----------
 
-export const manifiestoLineaSchema = z.object({
-  producto: texto("El producto es obligatorio"),
+const manifiestoLineaBase = z.object({
+  producto: z.enum(NOMBRES_PRODUCTOS, "Elige un producto de la lista"),
   color: z.string().trim().optional(),
-  tamano: texto("El tamaño es obligatorio"),
+  tamano: z.enum(TAMANOS, "Elige un tamaño"),
   cajas,
 });
+
+export const manifiestoLineaSchema = manifiestoLineaBase.superRefine(
+  (linea, ctx) => {
+    const error = errorDeColor(linea.producto, linea.color);
+    if (error)
+      ctx.addIssue({ code: "custom", path: ["color"], message: error });
+  },
+);
 
 export const crearTrailerSchema = z.object({
   placa: texto("La placa es obligatoria"),
@@ -45,7 +54,9 @@ export const actualizarTrailerSchema = crearTrailerSchema
     "No se envió ningún campo para actualizar",
   );
 
-export const actualizarManifiestoLineaSchema = manifiestoLineaSchema
+// La combinación producto/color de una corrección parcial se revisa en el backend,
+// porque ahí se conoce la línea completa ya guardada.
+export const actualizarManifiestoLineaSchema = manifiestoLineaBase
   .partial()
   .refine(
     (d) => Object.keys(d).length > 0,

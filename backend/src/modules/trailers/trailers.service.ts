@@ -1,3 +1,4 @@
+import { errorDeColor } from "@abastos/shared";
 import type {
   ActualizarManifiestoLineaInput,
   ActualizarTrailerInput,
@@ -203,7 +204,14 @@ export async function actualizarLinea(
   lineaId: number,
   input: ActualizarManifiestoLineaInput,
 ): Promise<TrailerDto> {
-  await lineaDelTrailer(trailerId, lineaId);
+  const actual = await lineaDelTrailer(trailerId, lineaId);
+
+  // Revisa la combinación producto/color tal como quedaría después del cambio.
+  const producto = input.producto ?? actual.producto;
+  const color = input.color !== undefined ? input.color || null : actual.color;
+  const errorColor = errorDeColor(producto, color);
+  if (errorColor) throw new AppError(400, errorColor);
+
   if (input.cajas !== undefined) {
     const vendidas = (await vendidasPorLinea([lineaId])).get(lineaId) ?? 0;
     if (input.cajas < vendidas) {
