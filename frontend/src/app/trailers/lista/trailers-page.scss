@@ -1,0 +1,135 @@
+.encabezado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.filtro {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin-bottom: 1.25rem;
+  border: 1.5px solid var(--linea);
+  border-radius: var(--radio);
+  overflow: hidden;
+
+  button {
+    min-height: 44px;
+    border: 0;
+    background: var(--superficie);
+    color: var(--tinta-suave);
+    font: 600 1rem var(--fuente);
+    cursor: pointer;
+  }
+
+  .activo {
+    background: var(--tinta);
+    color: var(--fondo);
+  }
+}
+
+.trailer {
+  margin-bottom: 1rem;
+  padding: 1rem;
+  border: 1.5px solid var(--linea);
+  border-radius: var(--radio);
+  background: var(--superficie);
+}
+
+.trailer__cabeza {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+
+  h2 {
+    font-size: 1.625rem;
+  }
+}
+
+.trailer__meta {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 0.875rem;
+  margin: 0.125rem 0 0;
+  color: var(--tinta-suave);
+  font-size: 0.9375rem;
+}
+
+.trailer__total {
+  display: grid;
+  justify-items: end;
+  color: var(--tinta-suave);
+  font-size: 0.875rem;
+  white-space: nowrap;
+
+  .cifra {
+    color: var(--tinta);
+    font-size: 2.25rem;
+    line-height: 1;
+  }
+}
+
+// La barra es lo único "llamativo" de la pantalla: dice de un vistazo
+// cuánto queda y de qué color.
+.existencia {
+  display: flex;
+  height: 14px;
+  margin: 0.875rem 0;
+  border-radius: 7px;
+  background: var(--linea);
+  overflow: hidden;
+
+  span + span {
+    border-left: 2px solid var(--superficie);
+  }
+}
+
+.lineas {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: grid;
+    grid-template-columns: auto 1fr auto auto;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.375rem 0;
+    border-top: 1px solid var(--linea);
+  }
+
+  .agotada {
+    color: var(--tinta-suave);
+    text-decoration: line-through;
+  }
+}
+
+.punto {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.lineas__tamano {
+  font-weight: 600;
+}
+
+.lineas__cajas {
+  min-width: 4.5rem;
+  text-align: right;
+  font-size: 1.25rem;
+
+  small {
+    color: var(--tinta-suave);
+    font-size: 0.875rem;
+  }
+}
+
+.vacio {
+  display: grid;
+  justify-items: start;
+  gap: 0.75rem;
+  color: var(--tinta-suave);
+}

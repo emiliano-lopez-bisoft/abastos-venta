@@ -1,3 +1,7 @@
-main {
-  padding: 1.5rem;
+.contenido {
+  max-width: 760px;
+  margin: 0 auto;
+  // Respeta la muesca y la barra de inicio del iPhone.
+  padding: max(1rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right))
+    max(1.5rem, env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
 }

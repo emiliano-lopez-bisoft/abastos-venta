@@ -1,0 +1,69 @@
+<header class="encabezado">
+  <h1>Trailers</h1>
+  <a class="boton" routerLink="/trailers/nuevo">Registrar trailer</a>
+</header>
+
+<div class="filtro" role="group" aria-label="Filtrar por estado">
+  <button type="button" [class.activo]="estado() === 'ACTIVO'" [attr.aria-pressed]="estado() === 'ACTIVO'"
+    (click)="estado.set('ACTIVO')">
+    En el andén
+  </button>
+  <button type="button" [class.activo]="estado() === 'CERRADO'" [attr.aria-pressed]="estado() === 'CERRADO'"
+    (click)="estado.set('CERRADO')">
+    Cerrados
+  </button>
+</div>
+
+@if (trailers.error()) {
+  <div class="aviso">
+    <p>{{ mensajeDeError(trailers.error()) }}</p>
+    <button type="button" class="boton boton--secundario" (click)="trailers.reload()">Volver a intentar</button>
+  </div>
+} @else if (trailers.isLoading() && trailers.value().length === 0) {
+  <p class="vacio">Cargando trailers…</p>
+} @else {
+  @for (t of trailers.value(); track t.id) {
+    <article class="trailer">
+      <div class="trailer__cabeza">
+        <div>
+          <h2>{{ t.numero }}</h2>
+          <p class="trailer__meta">
+            <span>{{ t.invernadero }}</span>
+            <span>Andén {{ t.anden }}</span>
+            <span>Placa {{ t.placa }}</span>
+          </p>
+        </div>
+        <div class="trailer__total">
+          <span class="cifra">{{ t.totales.disponibles | number }}</span>
+          <span>de {{ t.totales.cajas | number }} cajas</span>
+        </div>
+      </div>
+
+      <div class="existencia" aria-hidden="true">
+        @for (s of segmentos(t); track $index) {
+          <span [style.width.%]="s.porcentaje" [style.background]="s.color"></span>
+        }
+      </div>
+
+      <ul class="lineas">
+        @for (l of t.manifiesto; track l.id) {
+          <li [class.agotada]="l.disponibles === 0">
+            <span class="punto" [style.background]="colorDeChile(l.color)"></span>
+            <span class="lineas__nombre">{{ nombreLinea(l) }}</span>
+            <span class="lineas__tamano">{{ l.tamano }}</span>
+            <span class="cifra lineas__cajas">{{ l.disponibles | number }}<small>/{{ l.cajas | number }}</small></span>
+          </li>
+        }
+      </ul>
+    </article>
+  } @empty {
+    <div class="vacio">
+      @if (estado() === 'ACTIVO') {
+        <p>No hay trailers en el andén. Registra el siguiente cuando llegue.</p>
+        <a class="boton" routerLink="/trailers/nuevo">Registrar trailer</a>
+      } @else {
+        <p>Todavía no hay trailers cerrados.</p>
+      }
+    </div>
+  }
+}

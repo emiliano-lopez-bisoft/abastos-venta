@@ -1,0 +1,93 @@
+.encabezado {
+  margin-bottom: 1.25rem;
+}
+
+.volver {
+  display: inline-block;
+  margin-bottom: 0.25rem;
+  color: var(--primario);
+  font-weight: 600;
+  text-decoration: none;
+
+  &::before {
+    content: '‹ ';
+  }
+}
+
+fieldset {
+  margin: 0 0 1.5rem;
+  padding: 0;
+  border: 0;
+}
+
+legend {
+  margin-bottom: 0.75rem;
+  font-family: var(--fuente-cifras);
+  font-size: 1.375rem;
+  font-weight: 700;
+}
+
+.rejilla {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr));
+  gap: 0.875rem;
+}
+
+// Cada línea lleva una franja del color del chile a la izquierda.
+.linea {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-bottom: 0.875rem;
+  padding: 0.875rem 0.875rem 0.875rem 1.125rem;
+  border: 1.5px solid var(--linea);
+  border-left: 6px solid var(--color-linea, var(--chile-otro));
+  border-radius: var(--radio);
+  background: var(--superficie);
+
+  @media (min-width: 640px) {
+    grid-template-columns: 2fr 1.3fr 1fr 1fr auto;
+    align-items: start;
+  }
+}
+
+.linea__producto {
+  grid-column: 1 / -1;
+
+  @media (min-width: 640px) {
+    grid-column: auto;
+  }
+}
+
+.linea__quitar {
+  grid-column: 1 / -1;
+  justify-self: start;
+  padding: 0;
+
+  @media (min-width: 640px) {
+    grid-column: auto;
+    align-self: end;
+    padding: 0 0.5rem;
+  }
+}
+
+.manifiesto__pie {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+
+  p {
+    margin: 0;
+    color: var(--tinta-suave);
+  }
+
+  .cifra {
+    color: var(--tinta);
+    font-size: 1.75rem;
+  }
+}
+
+.guardar {
+  margin-top: 0.5rem;
+}

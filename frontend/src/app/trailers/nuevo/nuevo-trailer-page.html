@@ -1,0 +1,121 @@
+<header class="encabezado">
+  <a class="volver" routerLink="/trailers">Trailers</a>
+  <h1>Registrar trailer</h1>
+</header>
+
+<form novalidate (submit)="guardar($event)">
+  <fieldset>
+    <legend>Datos del trailer</legend>
+    <div class="rejilla">
+      <label class="campo" [class.campo--error]="f.numero().touched() && f.numero().invalid()">
+        <span>Número de trailer</span>
+        <input [formField]="f.numero" autocomplete="off" />
+        <app-error-campo [campo]="f.numero" />
+      </label>
+      <label class="campo" [class.campo--error]="f.placa().touched() && f.placa().invalid()">
+        <span>Placa</span>
+        <input [formField]="f.placa" autocomplete="off" autocapitalize="characters" />
+        <app-error-campo [campo]="f.placa" />
+      </label>
+      <label class="campo" [class.campo--error]="f.invernadero().touched() && f.invernadero().invalid()">
+        <span>Invernadero</span>
+        <input [formField]="f.invernadero" />
+        <app-error-campo [campo]="f.invernadero" />
+      </label>
+      <label class="campo" [class.campo--error]="f.chofer().touched() && f.chofer().invalid()">
+        <span>Chofer</span>
+        <input [formField]="f.chofer" />
+        <app-error-campo [campo]="f.chofer" />
+      </label>
+      <label class="campo" [class.campo--error]="f.anden().touched() && f.anden().invalid()">
+        <span>Andén</span>
+        <input [formField]="f.anden" inputmode="numeric" />
+        <app-error-campo [campo]="f.anden" />
+      </label>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Gastos del viaje</legend>
+    <div class="rejilla">
+      <label class="campo" [class.campo--error]="f.costoAnden().touched() && f.costoAnden().invalid()">
+        <span>Piso (andén)</span>
+        <input type="number" [formField]="f.costoAnden" inputmode="decimal" (focus)="seleccionar($event)" />
+        <app-error-campo [campo]="f.costoAnden" />
+      </label>
+      <label class="campo" [class.campo--error]="f.flete().touched() && f.flete().invalid()">
+        <span>Flete</span>
+        <input type="number" [formField]="f.flete" inputmode="decimal" (focus)="seleccionar($event)" />
+        <app-error-campo [campo]="f.flete" />
+      </label>
+      <label class="campo" [class.campo--error]="f.descarga().touched() && f.descarga().invalid()">
+        <span>Descarga</span>
+        <input type="number" [formField]="f.descarga" inputmode="decimal" (focus)="seleccionar($event)" />
+        <app-error-campo [campo]="f.descarga" />
+      </label>
+      <label class="campo" [class.campo--error]="f.comisionPorcentaje().touched() && f.comisionPorcentaje().invalid()">
+        <span>Comisión (%)</span>
+        <input type="number" [formField]="f.comisionPorcentaje" inputmode="decimal" (focus)="seleccionar($event)" />
+        <app-error-campo [campo]="f.comisionPorcentaje" />
+      </label>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Manifiesto</legend>
+
+    @for (linea of f.manifiesto; track $index; let i = $index) {
+      <div class="linea" [style.--color-linea]="colorDeChile(linea.color().value())">
+        <label class="campo linea__producto">
+          <span>Producto</span>
+          <input [formField]="linea.producto" />
+          <app-error-campo [campo]="linea.producto" />
+        </label>
+        <label class="campo">
+          <span>Color</span>
+          <select [formField]="linea.color">
+            @for (c of colores; track c) {
+              <option [value]="c">{{ c }}</option>
+            }
+          </select>
+        </label>
+        <label class="campo" [class.campo--error]="linea.tamano().touched() && linea.tamano().invalid()">
+          <span>Tamaño</span>
+          <select [formField]="linea.tamano">
+            <option value="" disabled>Elige</option>
+            @for (t of tamanos; track t) {
+              <option [value]="t">{{ t }}</option>
+            }
+          </select>
+          <app-error-campo [campo]="linea.tamano" />
+        </label>
+        <label class="campo" [class.campo--error]="linea.cajas().touched() && linea.cajas().invalid()">
+          <span>Cajas</span>
+          <input type="number" [formField]="linea.cajas" inputmode="numeric" (focus)="seleccionar($event)" />
+          <app-error-campo [campo]="linea.cajas" />
+        </label>
+        @if (f.manifiesto.length > 1) {
+          <button type="button" class="boton boton--peligro linea__quitar" (click)="quitarLinea(i)"
+            [attr.aria-label]="'Quitar línea ' + (i + 1)">
+            Quitar
+          </button>
+        }
+      </div>
+    }
+
+    <app-error-campo [campo]="f.manifiesto" />
+
+    <div class="manifiesto__pie">
+      <button type="button" class="boton boton--secundario" (click)="agregarLinea()">Agregar tamaño</button>
+      <p>Total <span class="cifra">{{ totalCajas() | number }}</span> cajas</p>
+    </div>
+  </fieldset>
+
+  @if (errorServidor(); as error) {
+    <p class="aviso" role="alert">{{ error }}</p>
+  }
+
+  <button type="submit" class="boton boton--ancho guardar" [disabled]="f().submitting()">
+    {{ f().submitting() ? 'Guardando…' : 'Guardar trailer' }}
+  </button>
+</form>

@@ -1,7 +1,8 @@
 import { z } from "zod";
+import { es } from "zod/locales";
 
 // Mensajes de validación de Zod en español (aplica en backend y frontend).
-z.config(z.locales.es());
+z.config(es());
 
 export * from "./comun.js";
 export * from "./dinero.js";
