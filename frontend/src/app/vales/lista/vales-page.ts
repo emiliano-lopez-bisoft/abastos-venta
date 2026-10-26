@@ -4,12 +4,14 @@ import { RouterLink } from '@angular/router';
 import { formatearFolio } from '@abastos/shared';
 import { colorDeChile, nombreProducto } from '../../core/catalogos';
 import { mensajeDeError } from '../../core/errores';
-import { hoyCdmx, sumarDias } from '../../core/fechas';
+import { sumarDias } from '../../core/fechas';
 import { ValesApi } from '../vales.api';
+import { hoyCdmx } from '../../core/fechas';
+import { SelectorDia } from '../../core/selector-dia';
 
 @Component({
   selector: 'app-vales-page',
-  imports: [RouterLink, CurrencyPipe, DatePipe, DecimalPipe],
+  imports: [RouterLink, CurrencyPipe, DatePipe, DecimalPipe, SelectorDia],
   templateUrl: './vales-page.html',
   styleUrl: './vales-page.scss',
 })
@@ -42,22 +44,6 @@ export class ValesPage {
   protected readonly nombreProducto = nombreProducto;
   protected readonly formatearFolio = formatearFolio;
   protected readonly mensajeDeError = mensajeDeError;
-  protected readonly hoyCdmx = hoyCdmx;
-
-  protected cambiarDia(dias: number): void {
-    this.fecha.update((f) => sumarDias(f, dias));
-    this.porCancelar.set(null);
-  }
-
-  protected irAHoy(): void {
-    this.fecha.set(hoyCdmx());
-    this.porCancelar.set(null);
-  }
-
-  protected elegirFecha(evento: Event): void {
-    const valor = (evento.target as HTMLInputElement).value;
-    if (valor) this.fecha.set(valor);
-  }
 
   protected pedirConfirmacion(id: number): void {
     this.errorCancelar.set(null);

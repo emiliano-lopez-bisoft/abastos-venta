@@ -133,6 +133,18 @@
   }
 }
 
+.trailer__liquidacion {
+  display: inline-block;
+  margin-top: 0.75rem;
+  color: var(--primario);
+  font-weight: 600;
+  text-decoration: none;
+
+  &::after {
+    content: ' ›';
+  }
+}
+
 .vacio {
   display: grid;
   justify-items: start;

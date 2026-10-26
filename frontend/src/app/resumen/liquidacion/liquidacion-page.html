@@ -1,0 +1,155 @@
+<a class="volver no-imprimir" routerLink="/trailers">Trailers</a>
+
+@if (liquidacion.error()) {
+  <div class="aviso">
+    <p>{{ mensajeDeError(liquidacion.error()) }}</p>
+    <button type="button" class="boton boton--secundario" (click)="liquidacion.reload()">Volver a intentar</button>
+  </div>
+} @else if (liquidacion.value(); as l) {
+  <header class="encabezado">
+    <div>
+      <h1>{{ titulo() }}</h1>
+      <p class="datos">
+        <span>{{ l.trailer.invernadero }}</span>
+        <span>Llegó el {{ l.trailer.fechaLlegada | date: 'd \'de\' MMMM' }}</span>
+        <span>Andén {{ l.trailer.anden }}</span>
+        <span>Placa {{ l.trailer.placa }}</span>
+        <span>Chofer {{ l.trailer.chofer }}</span>
+      </p>
+    </div>
+    <button type="button" class="boton boton--secundario no-imprimir" (click)="imprimir()">Imprimir o guardar PDF</button>
+  </header>
+
+  @if (l.trailer.estado === 'ACTIVO') {
+    <p class="pendiente">El trailer sigue en el andén: las cifras cambian con cada venta.</p>
+  }
+
+  <!-- Balance: venta menos gastos, como el cuadro de la hoja de Excel -->
+  <section class="balance" aria-label="Balance">
+    <dl class="cuenta">
+      <div>
+        <dt>Venta</dt>
+        <dd class="cifra">{{ l.venta | currency }}</dd>
+      </div>
+      <div>
+        <dt>Flete</dt>
+        <dd class="cifra">−{{ l.gastos.flete | currency }}</dd>
+      </div>
+      <div>
+        <dt>Piso</dt>
+        <dd class="cifra">−{{ l.gastos.piso | currency }}</dd>
+      </div>
+      <div>
+        <dt>Descarga</dt>
+        <dd class="cifra">−{{ l.gastos.descarga | currency }}</dd>
+      </div>
+      <div>
+        <dt>Comisión ({{ l.gastos.comisionPorcentaje | number }} %)</dt>
+        <dd class="cifra">−{{ l.gastos.comision | currency }}</dd>
+      </div>
+      <div class="cuenta__subtotal">
+        <dt>Total de gastos</dt>
+        <dd class="cifra">{{ l.gastos.total | currency }}</dd>
+      </div>
+      <div class="cuenta__resultado" [class.cuenta__resultado--negativo]="l.balance < 0">
+        <dt>Balance</dt>
+        <dd class="cifra">{{ l.balance | currency }}</dd>
+      </div>
+    </dl>
+
+    <dl class="cajas">
+      <div>
+        <dt>Llegaron</dt>
+        <dd class="cifra">{{ l.cajas.entrada | number }}</dd>
+      </div>
+      <div>
+        <dt>Vendidas</dt>
+        <dd class="cifra">{{ l.cajas.vendidas | number }}</dd>
+      </div>
+      <div>
+        <dt>Quedan</dt>
+        <dd class="cifra">{{ l.cajas.quedan | number }}</dd>
+      </div>
+    </dl>
+  </section>
+
+  <!-- Un bloque por producto, como en la hoja -->
+  @for (p of l.productos; track p.producto) {
+    <section class="producto" [style.--color-producto]="colorDeChile(p.producto)">
+      <header class="producto__cabeza">
+        <h2>{{ p.producto }}</h2>
+        <p class="cifra">{{ p.venta | currency }}</p>
+      </header>
+
+      <div class="tabla-desplazable">
+        <table class="tamanos">
+          <thead>
+            <tr>
+              <th scope="col"><span class="visualmente-oculto">Cajas</span></th>
+              @for (t of p.tamanos; track t.tamano) {
+                <th scope="col">{{ t.tamano }}</th>
+              }
+              <th scope="col">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">Llegaron</th>
+              @for (t of p.tamanos; track t.tamano) {
+                <td>{{ t.recibidas | number }}</td>
+              }
+              <td>{{ p.totales.recibidas | number }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Vendidas</th>
+              @for (t of p.tamanos; track t.tamano) {
+                <td>{{ t.vendidas | number }}</td>
+              }
+              <td>{{ p.totales.vendidas | number }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Quedan</th>
+              @for (t of p.tamanos; track t.tamano) {
+                <td [class.quedan]="t.quedan > 0">{{ t.quedan | number }}</td>
+              }
+              <td [class.quedan]="p.totales.quedan > 0">{{ p.totales.quedan | number }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      @if (p.ventas.length > 0) {
+        <div class="tabla-desplazable">
+          <table class="ventas">
+            <thead>
+              <tr>
+                <th scope="col">Folio</th>
+                <th scope="col">Cliente</th>
+                <th scope="col">Tamaño</th>
+                <th scope="col">Cajas</th>
+                <th scope="col">Precio</th>
+                <th scope="col">Importe</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (v of p.ventas; track $index) {
+                <tr>
+                  <td>{{ formatearFolio(v.ticketId) }}</td>
+                  <td class="ventas__cliente">{{ v.clienteNombre }}</td>
+                  <td>{{ v.tamano }}</td>
+                  <td>{{ v.cajas | number }}</td>
+                  <td>{{ v.precioCaja | currency }}</td>
+                  <td>{{ v.subtotal | currency }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      } @else {
+        <p class="vacio">Todavía no hay ventas de este producto.</p>
+      }
+    </section>
+  }
+} @else {
+  <p class="vacio">Cargando liquidación…</p>
+}

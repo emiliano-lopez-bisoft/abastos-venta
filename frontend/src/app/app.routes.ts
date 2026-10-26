@@ -14,6 +14,17 @@ export const routes: Routes = [
       import('./trailers/nuevo/nuevo-trailer-page').then((m) => m.NuevoTrailerPage),
   },
   {
+    path: 'trailers/:id/liquidacion',
+    title: 'Liquidación',
+    loadComponent: () =>
+      import('./resumen/liquidacion/liquidacion-page').then((m) => m.LiquidacionPage),
+  },
+  {
+    path: 'resumen',
+    title: 'Resumen del día',
+    loadComponent: () => import('./resumen/dia/resumen-dia-page').then((m) => m.ResumenDiaPage),
+  },
+  {
     path: 'vender',
     title: 'Nuevo vale',
     loadComponent: () => import('./vales/nuevo/nuevo-vale-page').then((m) => m.NuevoValePage),

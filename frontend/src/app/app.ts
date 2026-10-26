@@ -12,5 +12,6 @@ export class App {
     { ruta: '/trailers', texto: 'Trailers' },
     { ruta: '/vender', texto: 'Vender' },
     { ruta: '/vales', texto: 'Vales' },
+    { ruta: '/resumen', texto: 'Resumen' },
   ];
 }

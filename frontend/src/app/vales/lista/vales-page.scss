@@ -15,42 +15,6 @@
   }
 }
 
-.dia {
-  display: grid;
-  grid-template-columns: var(--toque) 1fr var(--toque);
-  gap: 0.5rem;
-
-  .boton {
-    padding: 0;
-    font-size: 1.5rem;
-  }
-
-  input {
-    min-height: var(--toque);
-    padding: 0 0.75rem;
-    border: 1.5px solid var(--linea);
-    border-radius: var(--radio-chico);
-    background: var(--superficie);
-    color: var(--tinta);
-    font: 600 1.0625rem var(--fuente);
-  }
-}
-
-.hoy {
-  justify-self: start;
-  padding: 0;
-  border: 0;
-  background: none;
-  color: var(--primario);
-  font: 600 1rem var(--fuente);
-  cursor: pointer;
-
-  @media (min-width: 640px) {
-    grid-column: 2;
-    justify-self: end;
-  }
-}
-
 // Total del día: lo primero que tu tío quiere ver.
 .resumen {
   display: flex;

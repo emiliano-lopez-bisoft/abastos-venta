@@ -1,15 +1,6 @@
 <header class="encabezado">
   <h1>Vales</h1>
-
-  <div class="dia" role="group" aria-label="Elegir día">
-    <button type="button" class="boton boton--secundario" (click)="cambiarDia(-1)" aria-label="Día anterior">‹</button>
-    <input type="date" [value]="fecha()" [max]="hoyCdmx()" (change)="elegirFecha($event)" aria-label="Fecha" />
-    <button type="button" class="boton boton--secundario" (click)="cambiarDia(1)" [disabled]="esHoy()"
-      aria-label="Día siguiente">›</button>
-  </div>
-  @if (!esHoy()) {
-    <button type="button" class="hoy" (click)="irAHoy()">Volver a hoy</button>
-  }
+  <app-selector-dia [(fecha)]="fecha" />
 </header>
 
 @if (vales.error()) {

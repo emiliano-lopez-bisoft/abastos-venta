@@ -1,0 +1,250 @@
+:host {
+  display: block;
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+.volver {
+  display: inline-block;
+  margin-bottom: 0.25rem;
+  color: var(--primario);
+  font-weight: 600;
+  text-decoration: none;
+
+  &::before {
+    content: '‹ ';
+  }
+}
+
+.encabezado {
+  display: grid;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+
+  @media (min-width: 640px) {
+    grid-template-columns: 1fr auto;
+    align-items: start;
+  }
+}
+
+.datos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 0.875rem;
+  margin: 0.25rem 0 0;
+  color: var(--tinta-suave);
+}
+
+.pendiente {
+  margin: 0 0 1rem;
+  color: var(--tinta-suave);
+  font-style: italic;
+}
+
+// ---------- Balance ----------
+
+.balance {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding: 1rem 1.25rem;
+  border: 1.5px solid var(--linea);
+  border-radius: var(--radio);
+  background: var(--superficie);
+
+  @media (min-width: 700px) {
+    grid-template-columns: 1.6fr 1fr;
+    gap: 2rem;
+  }
+
+  dl {
+    margin: 0;
+  }
+
+  dt {
+    color: var(--tinta-suave);
+  }
+
+  dd {
+    margin: 0;
+  }
+}
+
+.cuenta div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.25rem 0;
+
+  dd {
+    font-size: 1.25rem;
+  }
+}
+
+.cuenta__subtotal {
+  border-top: 1px solid var(--linea);
+}
+
+.cuenta__resultado {
+  margin-top: 0.25rem;
+  border-top: 2px solid var(--tinta);
+
+  dt {
+    color: var(--tinta) !important;
+    font-weight: 600;
+  }
+
+  dd {
+    color: var(--primario);
+    font-size: 2.25rem !important;
+  }
+}
+
+.cuenta__resultado--negativo dd {
+  color: var(--peligro);
+}
+
+.cajas {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  align-content: start;
+  gap: 0.5rem;
+
+  @media (min-width: 700px) {
+    grid-template-columns: 1fr;
+  }
+
+  div {
+    display: flex;
+    flex-direction: column;
+
+    @media (min-width: 700px) {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+  }
+
+  dd {
+    font-size: 1.75rem;
+  }
+}
+
+// ---------- Productos ----------
+
+.producto {
+  margin-bottom: 2rem;
+}
+
+.producto__cabeza {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+  padding-left: 0.75rem;
+  border-left: 6px solid var(--color-producto, var(--chile-otro));
+
+  p {
+    margin: 0;
+    font-size: 1.5rem;
+  }
+}
+
+// Las tablas anchas se desplazan dentro de su caja en el teléfono.
+.tabla-desplazable {
+  margin-bottom: 0.75rem;
+  overflow-x: auto;
+  border: 1.5px solid var(--linea);
+  border-radius: var(--radio);
+  background: var(--superficie);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+th,
+td {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--linea);
+  text-align: right;
+  white-space: nowrap;
+}
+
+thead th {
+  color: var(--tinta-suave);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+tbody tr:last-child > * {
+  border-bottom: 0;
+}
+
+tbody th {
+  color: var(--tinta-suave);
+  font-weight: 500;
+  text-align: left;
+}
+
+.tamanos td {
+  font-family: var(--fuente-cifras);
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.quedan {
+  color: var(--peligro);
+}
+
+.ventas th:nth-child(2),
+.ventas__cliente {
+  text-align: left;
+}
+
+.ventas__cliente {
+  white-space: normal;
+  min-width: 8rem;
+}
+
+.visualmente-oculto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+.vacio {
+  color: var(--tinta-suave);
+}
+
+// ---------- Impresión ----------
+
+@media print {
+  :host {
+    max-width: none;
+  }
+
+  .no-imprimir {
+    display: none !important;
+  }
+
+  .balance,
+  .tabla-desplazable {
+    border-color: #999;
+    background: none;
+  }
+
+  .tabla-desplazable {
+    overflow: visible;
+  }
+
+  .producto {
+    break-inside: avoid;
+  }
+}

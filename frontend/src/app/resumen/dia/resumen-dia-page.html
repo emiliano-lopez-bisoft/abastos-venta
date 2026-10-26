@@ -1,0 +1,52 @@
+<header class="encabezado">
+  <h1>Resumen del día</h1>
+  <app-selector-dia [(fecha)]="fecha" />
+</header>
+
+@if (resumen.error()) {
+  <div class="aviso">
+    <p>{{ mensajeDeError(resumen.error()) }}</p>
+    <button type="button" class="boton boton--secundario" (click)="resumen.reload()">Volver a intentar</button>
+  </div>
+} @else if (resumen.value(); as r) {
+  <section class="cuenta" aria-label="Cuenta del día">
+    <dl>
+      <div>
+        <dt>Ventas</dt>
+        <dd class="cifra">{{ r.ventas | currency }}</dd>
+      </div>
+      <div>
+        <dt>Costo de andén</dt>
+        <dd class="cifra">−{{ r.gastosAnden | currency }}</dd>
+      </div>
+      <div class="cuenta__resultado" [class.cuenta__resultado--negativo]="r.ganancia < 0">
+        <dt>Ganancia</dt>
+        <dd class="cifra">{{ r.ganancia | currency }}</dd>
+      </div>
+    </dl>
+    <p class="cuenta__nota">
+      {{ r.tickets | number }} {{ r.tickets === 1 ? 'vale' : 'vales' }} con {{ r.cajasVendidas | number }} cajas.
+      El costo de andén es el de los trailers que llegaron este día.
+    </p>
+  </section>
+
+  <section aria-labelledby="titulo-trailers">
+    <h2 id="titulo-trailers">Ventas por trailer</h2>
+
+    @for (t of r.porTrailer; track t.trailerId) {
+      <a class="trailer" [routerLink]="['/trailers', t.trailerId, 'liquidacion']">
+        <span class="trailer__nombre">
+          <strong>{{ t.numero }}</strong>
+          <span>{{ t.invernadero }}</span>
+        </span>
+        <span class="trailer__cajas"><span class="cifra">{{ t.cajasVendidas | number }}</span> cajas</span>
+        <span class="trailer__venta cifra">{{ t.venta | currency }}</span>
+        <span class="trailer__ir">Ver liquidación</span>
+      </a>
+    } @empty {
+      <p class="vacio">No hubo ventas este día.</p>
+    }
+  </section>
+} @else {
+  <p class="vacio">Cargando resumen…</p>
+}

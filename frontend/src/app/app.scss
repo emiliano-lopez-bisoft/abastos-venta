@@ -33,3 +33,15 @@
     color: var(--tinta);
   }
 }
+
+// Al imprimir (por ejemplo, la liquidación) solo sale el contenido.
+@media print {
+  .contenido {
+    max-width: none;
+    padding: 0;
+  }
+
+  .navegacion {
+    display: none;
+  }
+}

@@ -4,12 +4,20 @@
 </header>
 
 <div class="filtro" role="group" aria-label="Filtrar por estado">
-  <button type="button" [class.activo]="estado() === 'ACTIVO'" [attr.aria-pressed]="estado() === 'ACTIVO'"
-    (click)="estado.set('ACTIVO')">
+  <button
+    type="button"
+    [class.activo]="estado() === 'ACTIVO'"
+    [attr.aria-pressed]="estado() === 'ACTIVO'"
+    (click)="estado.set('ACTIVO')"
+  >
     En el andén
   </button>
-  <button type="button" [class.activo]="estado() === 'CERRADO'" [attr.aria-pressed]="estado() === 'CERRADO'"
-    (click)="estado.set('CERRADO')">
+  <button
+    type="button"
+    [class.activo]="estado() === 'CERRADO'"
+    [attr.aria-pressed]="estado() === 'CERRADO'"
+    (click)="estado.set('CERRADO')"
+  >
     Cerrados
   </button>
 </div>
@@ -17,7 +25,9 @@
 @if (trailers.error()) {
   <div class="aviso">
     <p>{{ mensajeDeError(trailers.error()) }}</p>
-    <button type="button" class="boton boton--secundario" (click)="trailers.reload()">Volver a intentar</button>
+    <button type="button" class="boton boton--secundario" (click)="trailers.reload()">
+      Volver a intentar
+    </button>
   </div>
 } @else if (trailers.isLoading() && trailers.value().length === 0) {
   <p class="vacio">Cargando trailers…</p>
@@ -51,10 +61,15 @@
             <span class="punto" [style.background]="colorDeChile(l.color)"></span>
             <span class="lineas__nombre">{{ nombreLinea(l) }}</span>
             <span class="lineas__tamano">{{ l.tamano }}</span>
-            <span class="cifra lineas__cajas">{{ l.disponibles | number }}<small>/{{ l.cajas | number }}</small></span>
+            <span class="cifra lineas__cajas"
+              >{{ l.disponibles | number }}<small>/{{ l.cajas | number }}</small></span
+            >
           </li>
         }
       </ul>
+      <a class="trailer__liquidacion" [routerLink]="['/trailers', t.id, 'liquidacion']"
+        >Ver liquidación</a
+      >
     </article>
   } @empty {
     <div class="vacio">
