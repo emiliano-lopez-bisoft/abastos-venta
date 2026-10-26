@@ -19,4 +19,12 @@ export class TrailersApi {
   crear(datos: CrearTrailerInput): Promise<TrailerDto> {
     return firstValueFrom(this.http.post<TrailerDto>(URL, datos));
   }
+
+  cerrar(id: number): Promise<TrailerDto> {
+    return firstValueFrom(this.http.post<TrailerDto>(`${URL}/${id}/cerrar`, {}));
+  }
+
+  reabrir(id: number): Promise<TrailerDto> {
+    return firstValueFrom(this.http.post<TrailerDto>(`${URL}/${id}/reabrir`, {}));
+  }
 }

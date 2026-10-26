@@ -4,30 +4,24 @@
 </header>
 
 <div class="filtro" role="group" aria-label="Filtrar por estado">
-  <button
-    type="button"
-    [class.activo]="estado() === 'ACTIVO'"
-    [attr.aria-pressed]="estado() === 'ACTIVO'"
-    (click)="estado.set('ACTIVO')"
-  >
+  <button type="button" [class.activo]="estado() === 'ACTIVO'" [attr.aria-pressed]="estado() === 'ACTIVO'"
+    (click)="cambiarEstado('ACTIVO')">
     En el andén
   </button>
-  <button
-    type="button"
-    [class.activo]="estado() === 'CERRADO'"
-    [attr.aria-pressed]="estado() === 'CERRADO'"
-    (click)="estado.set('CERRADO')"
-  >
+  <button type="button" [class.activo]="estado() === 'CERRADO'" [attr.aria-pressed]="estado() === 'CERRADO'"
+    (click)="cambiarEstado('CERRADO')">
     Cerrados
   </button>
 </div>
 
+@if (aviso(); as mensaje) {
+  <p class="exito" role="status">{{ mensaje }}</p>
+}
+
 @if (trailers.error()) {
   <div class="aviso">
     <p>{{ mensajeDeError(trailers.error()) }}</p>
-    <button type="button" class="boton boton--secundario" (click)="trailers.reload()">
-      Volver a intentar
-    </button>
+    <button type="button" class="boton boton--secundario" (click)="trailers.reload()">Volver a intentar</button>
   </div>
 } @else if (trailers.isLoading() && trailers.value().length === 0) {
   <p class="vacio">Cargando trailers…</p>
@@ -61,15 +55,50 @@
             <span class="punto" [style.background]="colorDeChile(l.color)"></span>
             <span class="lineas__nombre">{{ nombreLinea(l) }}</span>
             <span class="lineas__tamano">{{ l.tamano }}</span>
-            <span class="cifra lineas__cajas"
-              >{{ l.disponibles | number }}<small>/{{ l.cajas | number }}</small></span
-            >
+            <span class="cifra lineas__cajas">{{ l.disponibles | number }}<small>/{{ l.cajas | number }}</small></span>
           </li>
         }
       </ul>
-      <a class="trailer__liquidacion" [routerLink]="['/trailers', t.id, 'liquidacion']"
-        >Ver liquidación</a
-      >
+
+      <div class="trailer__pie">
+        <a class="trailer__liquidacion" [routerLink]="['/trailers', t.id, 'liquidacion']">Ver liquidación</a>
+
+        @if (t.estado === 'ACTIVO') {
+          @if (porCerrar() !== t.id) {
+            <button type="button" class="boton boton--secundario" (click)="pedirCierre(t.id)">Cerrar trailer</button>
+          }
+        } @else {
+          <button type="button" class="boton boton--secundario" (click)="reabrir(t)" [disabled]="procesando() === t.id">
+            {{ procesando() === t.id ? 'Reabriendo…' : 'Reabrir' }}
+          </button>
+        }
+      </div>
+
+      @if (porCerrar() === t.id) {
+        <div class="confirmar" role="alertdialog" [attr.aria-label]="'Cerrar trailer ' + t.numero">
+          @if (t.totales.disponibles > 0) {
+            <p>
+              <strong>Todavía quedan {{ t.totales.disponibles | number }} cajas sin vender.</strong>
+              Al cerrarlo ya no se podrá vender de este trailer, pero puedes reabrirlo después.
+            </p>
+          } @else {
+            <p>Ya se vendieron todas las cajas. Al cerrarlo deja de aparecer en Vender.</p>
+          }
+          <div class="confirmar__botones">
+            <button type="button" class="boton boton--secundario" (click)="porCerrar.set(null)"
+              [disabled]="procesando() === t.id">
+              No cerrar
+            </button>
+            <button type="button" class="boton" (click)="cerrar(t)" [disabled]="procesando() === t.id">
+              {{ procesando() === t.id ? 'Cerrando…' : 'Sí, cerrar trailer' }}
+            </button>
+          </div>
+        </div>
+      }
+
+      @if (errorAccion()?.id === t.id) {
+        <p class="aviso trailer__error" role="alert">{{ errorAccion()?.mensaje }}</p>
+      }
     </article>
   } @empty {
     <div class="vacio">
