@@ -9,7 +9,8 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 })
 export class App {
   protected readonly secciones = [
-    { ruta: '/vender', texto: 'Vender' },
     { ruta: '/trailers', texto: 'Trailers' },
+    { ruta: '/vender', texto: 'Vender' },
+    { ruta: '/vales', texto: 'Vales' },
   ];
 }

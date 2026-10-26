@@ -18,5 +18,10 @@ export const routes: Routes = [
     title: 'Nuevo vale',
     loadComponent: () => import('./vales/nuevo/nuevo-vale-page').then((m) => m.NuevoValePage),
   },
+  {
+    path: 'vales',
+    title: 'Vales',
+    loadComponent: () => import('./vales/lista/vales-page').then((m) => m.ValesPage),
+  },
   { path: '**', redirectTo: 'vender' },
 ];
