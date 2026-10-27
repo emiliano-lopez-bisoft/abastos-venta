@@ -3,7 +3,9 @@
 @if (liquidacion.error()) {
   <div class="aviso">
     <p>{{ mensajeDeError(liquidacion.error()) }}</p>
-    <button type="button" class="boton boton--secundario" (click)="liquidacion.reload()">Volver a intentar</button>
+    <button type="button" class="boton boton--secundario" (click)="liquidacion.reload()">
+      Volver a intentar
+    </button>
   </div>
 } @else if (liquidacion.value(); as l) {
   <header class="encabezado">
@@ -11,13 +13,19 @@
       <h1>{{ titulo() }}</h1>
       <p class="datos">
         <span>{{ l.trailer.invernadero }}</span>
-        <span>Llegó el {{ l.trailer.fechaLlegada | date: 'd \'de\' MMMM' }}</span>
+        <span>Trailer {{ l.trailer.numero }}</span>
+        <span>Llegó el {{ l.trailer.fechaLlegada | date: "d 'de' MMMM" }}</span>
+        @if (l.trailer.fechaCierre) {
+          <span>Cerró el {{ l.trailer.fechaCierre | date: "d 'de' MMMM" }}</span>
+        }
         <span>Andén {{ l.trailer.anden }}</span>
         <span>Placa {{ l.trailer.placa }}</span>
         <span>Chofer {{ l.trailer.chofer }}</span>
       </p>
     </div>
-    <button type="button" class="boton boton--secundario no-imprimir" (click)="imprimir()">Imprimir o guardar PDF</button>
+    <button type="button" class="boton boton--secundario no-imprimir" (click)="imprimir()">
+      Imprimir o guardar PDF
+    </button>
   </header>
 
   @if (l.trailer.estado === 'ACTIVO') {

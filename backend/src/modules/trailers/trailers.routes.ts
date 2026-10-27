@@ -3,6 +3,7 @@ import {
   actualizarTrailerSchema,
   crearTrailerSchema,
   idParamSchema,
+  listarCerradosQuerySchema,
   listarTrailersQuerySchema,
   manifiestoLineaParamsSchema,
   manifiestoLineaSchema,
@@ -10,11 +11,19 @@ import {
 import { Router } from "express";
 import * as servicio from "./trailers.service.js";
 
+// Express 5 manda al errorHandler los errores de funciones async,
+// incluidos los ZodError de .parse() (responden 400 con el detalle por campo).
 export const trailersRouter = Router();
 
 trailersRouter.get("/", async (req, res) => {
   const { estado } = listarTrailersQuerySchema.parse(req.query);
   res.json(await servicio.listarTrailers(estado));
+});
+
+// Va antes de '/:id' para que "cerrados" no se tome como un id.
+trailersRouter.get("/cerrados", async (req, res) => {
+  const { q, desde } = listarCerradosQuerySchema.parse(req.query);
+  res.json(await servicio.listarCerrados(q, desde));
 });
 
 trailersRouter.get("/:id", async (req, res) => {

@@ -1,0 +1,60 @@
+<label class="campo buscador">
+  <span>Buscar viaje</span>
+  <input type="search" [value]="busqueda()" (input)="escribir($event)" placeholder="Viaje, trailer, invernadero o placa"
+    autocomplete="off" enterkeyhint="search" />
+</label>
+
+@if (aviso(); as mensaje) {
+  <p class="exito" role="status">{{ mensaje }}</p>
+}
+
+@if (error(); as mensaje) {
+  <div class="aviso">
+    <p>{{ mensaje }}</p>
+    <button type="button" class="boton boton--secundario" (click)="reintentar()">Volver a intentar</button>
+  </div>
+}
+
+<ul class="cerrados" aria-live="polite">
+  @for (t of trailers(); track t.id) {
+    <li class="cerrado">
+      <div class="cerrado__datos">
+        <h2>{{ t.viaje ?? t.numero }}</h2>
+        <p class="cerrado__meta">
+          <span>{{ t.invernadero }}</span>
+          <span>Trailer {{ t.numero }}</span>
+        </p>
+        <p class="cerrado__meta">
+          <span>Llegó {{ t.fechaLlegada | date: 'd MMM' }}</span>
+          @if (t.fechaCierre) {
+            <span>Cerró {{ t.fechaCierre | date: 'd MMM' }}</span>
+          }
+        </p>
+      </div>
+      <p class="cerrado__cajas">
+        <span class="cifra">{{ t.vendidas | number }}</span>
+        <span>de {{ t.cajas | number }} vendidas</span>
+      </p>
+      <div class="cerrado__acciones">
+        <a class="cerrado__liquidacion" [routerLink]="['/trailers', t.id, 'liquidacion']">Ver liquidación</a>
+        <button type="button" class="boton boton--secundario" (click)="reabrir(t)" [disabled]="reabriendo() === t.id">
+          {{ reabriendo() === t.id ? 'Reabriendo…' : 'Reabrir' }}
+        </button>
+      </div>
+    </li>
+  }
+</ul>
+
+@if (cargando()) {
+  <p class="vacio">Cargando…</p>
+} @else if (trailers().length === 0 && !error()) {
+  <p class="vacio">
+    @if (busqueda().trim()) {
+      Ningún viaje cerrado coincide con “{{ busqueda().trim() }}”.
+    } @else {
+      Todavía no hay trailers cerrados.
+    }
+  </p>
+} @else if (siguiente() !== null) {
+  <button type="button" class="boton boton--secundario boton--ancho" (click)="verMas()">Ver más</button>
+}

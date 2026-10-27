@@ -17,6 +17,7 @@ interface LineaForm {
 }
 
 interface ModeloTrailer {
+  viaje: string;
   numero: string;
   placa: string;
   invernadero: string;
@@ -57,6 +58,7 @@ export class NuevoTrailerPage {
   protected readonly colorDeChile = colorDeChile;
 
   protected readonly modelo = signal<ModeloTrailer>({
+    viaje: '',
     numero: '',
     placa: '',
     invernadero: '',

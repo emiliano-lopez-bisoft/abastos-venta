@@ -6,7 +6,9 @@
 @if (resumen.error()) {
   <div class="aviso">
     <p>{{ mensajeDeError(resumen.error()) }}</p>
-    <button type="button" class="boton boton--secundario" (click)="resumen.reload()">Volver a intentar</button>
+    <button type="button" class="boton boton--secundario" (click)="resumen.reload()">
+      Volver a intentar
+    </button>
   </div>
 } @else if (resumen.value(); as r) {
   <section class="cuenta" aria-label="Cuenta del día">
@@ -25,8 +27,9 @@
       </div>
     </dl>
     <p class="cuenta__nota">
-      {{ r.tickets | number }} {{ r.tickets === 1 ? 'vale' : 'vales' }} con {{ r.cajasVendidas | number }} cajas.
-      El costo de andén es el de los trailers que llegaron este día.
+      {{ r.tickets | number }} {{ r.tickets === 1 ? 'vale' : 'vales' }} con
+      {{ r.cajasVendidas | number }} cajas. El costo de andén es el de los trailers que llegaron
+      este día.
     </p>
   </section>
 
@@ -36,10 +39,12 @@
     @for (t of r.porTrailer; track t.trailerId) {
       <a class="trailer" [routerLink]="['/trailers', t.trailerId, 'liquidacion']">
         <span class="trailer__nombre">
-          <strong>{{ t.numero }}</strong>
-          <span>{{ t.invernadero }}</span>
+          <strong>{{ t.viaje ?? t.numero }}</strong>
+          <span>{{ t.invernadero }}, trailer {{ t.numero }}</span>
         </span>
-        <span class="trailer__cajas"><span class="cifra">{{ t.cajasVendidas | number }}</span> cajas</span>
+        <span class="trailer__cajas"
+          ><span class="cifra">{{ t.cajasVendidas | number }}</span> cajas</span
+        >
         <span class="trailer__venta cifra">{{ t.venta | currency }}</span>
         <span class="trailer__ir">Ver liquidación</span>
       </a>

@@ -2,7 +2,7 @@ import { z } from "zod";
 import { NOMBRES_PRODUCTOS, TAMANOS, errorDeColor } from "./catalogos.js";
 import { cajas, importe } from "./dinero.js";
 
-const texto = (mensaje: string) => z.string().trim().min(1, mensaje);
+const texto = (mensaje: string) => z.string(mensaje).trim().min(1, mensaje);
 
 export const estadoTrailerSchema = z.enum(["ACTIVO", "CERRADO"]);
 export type EstadoTrailer = z.infer<typeof estadoTrailerSchema>;
@@ -25,6 +25,7 @@ export const manifiestoLineaSchema = manifiestoLineaBase.superRefine(
 );
 
 export const crearTrailerSchema = z.object({
+  viaje: texto("El nombre del viaje es obligatorio"),
   placa: texto("La placa es obligatoria"),
   numero: texto("El número de trailer es obligatorio"),
   invernadero: texto("El invernadero es obligatorio"),
@@ -67,6 +68,13 @@ export const listarTrailersQuerySchema = z.object({
   estado: estadoTrailerSchema.optional(),
 });
 
+export const listarCerradosQuerySchema = z.object({
+  /** Texto a buscar en viaje, número de trailer, invernadero o placa. */
+  q: z.string().trim().max(100).optional(),
+  /** Cuántos saltarse (para "Ver más"). */
+  desde: z.coerce.number().int().min(0).default(0),
+});
+
 export const manifiestoLineaParamsSchema = z.object({
   id: z.coerce.number().int().positive("Id de trailer inválido"),
   lineaId: z.coerce.number().int().positive("Id de línea inválido"),
@@ -93,6 +101,7 @@ export interface ManifiestoLineaDto {
 
 export interface TrailerDto {
   id: number;
+  viaje: string | null;
   placa: string;
   numero: string;
   invernadero: string;
@@ -103,7 +112,27 @@ export interface TrailerDto {
   descarga: number;
   comisionPorcentaje: number;
   fechaLlegada: string;
+  fechaCierre: string | null;
   estado: EstadoTrailer;
   manifiesto: ManifiestoLineaDto[];
   totales: { cajas: number; vendidas: number; disponibles: number };
+}
+
+/** Versión compacta para la lista de trailers cerrados. */
+export interface TrailerCerradoDto {
+  id: number;
+  viaje: string | null;
+  numero: string;
+  invernadero: string;
+  placa: string;
+  fechaLlegada: string;
+  fechaCierre: string | null;
+  cajas: number;
+  vendidas: number;
+}
+
+export interface PaginaTrailersCerradosDto {
+  trailers: TrailerCerradoDto[];
+  /** Valor de "desde" para pedir la siguiente página, o null si ya no hay más. */
+  siguiente: number | null;
 }

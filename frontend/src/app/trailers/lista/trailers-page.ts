@@ -5,6 +5,7 @@ import type { EstadoTrailer, ManifiestoLineaDto, TrailerDto } from '@abastos/sha
 import { colorDeChile, nombreProducto } from '../../core/catalogos';
 import { mensajeDeError } from '../../core/errores';
 import { TrailersApi } from '../trailers.api';
+import { TrailersCerrados } from './trailers-cerrados';
 
 interface SegmentoExistencia {
   color: string;
@@ -13,19 +14,24 @@ interface SegmentoExistencia {
 
 @Component({
   selector: 'app-trailers-page',
-  imports: [RouterLink, DecimalPipe],
+  imports: [RouterLink, DecimalPipe, TrailersCerrados],
   templateUrl: './trailers-page.html',
   styleUrl: './trailers-page.scss',
 })
 export class TrailersPage {
   private readonly api = inject(TrailersApi);
 
+  /** Pestaña visible. Los cerrados se manejan en su propio componente. */
   protected readonly estado = signal<EstadoTrailer>('ACTIVO');
-  protected readonly trailers = this.api.listar(this.estado);
+  protected readonly trailers = this.api.listar(signal<EstadoTrailer>('ACTIVO'));
 
+  /** Trailer que está pidiendo confirmación para cerrarse. */
   protected readonly porCerrar = signal<number | null>(null);
+  /** Trailer que se está cerrando en este momento. */
   protected readonly procesando = signal<number | null>(null);
+  /** Error de la última acción, junto con el trailer donde ocurrió. */
   protected readonly errorAccion = signal<{ id: number; mensaje: string } | null>(null);
+  /** Aviso después de cerrar, porque el trailer cambia de pestaña. */
   protected readonly aviso = signal<string | null>(null);
 
   protected readonly colorDeChile = colorDeChile;
@@ -35,6 +41,8 @@ export class TrailersPage {
     this.estado.set(estado);
     this.porCerrar.set(null);
     this.aviso.set(null);
+    // Al volver al andén se recarga, por si se reabrió algún trailer en Cerrados.
+    if (estado === 'ACTIVO') this.trailers.reload();
   }
 
   /** Barra de existencias: un tramo por línea del manifiesto, del color del chile. */
@@ -58,34 +66,14 @@ export class TrailersPage {
     this.porCerrar.set(id);
   }
 
-  protected cerrar(t: TrailerDto): Promise<void> {
-    return this.ejecutar(
-      t,
-      () => this.api.cerrar(t.id),
-      `El trailer ${t.numero} se pasó a Cerrados`,
-    );
-  }
-
-  protected reabrir(t: TrailerDto): Promise<void> {
-    return this.ejecutar(
-      t,
-      () => this.api.reabrir(t.id),
-      `El trailer ${t.numero} volvió al andén.`,
-    );
-  }
-
-  private async ejecutar(
-    t: TrailerDto,
-    accion: () => Promise<unknown>,
-    exito: string,
-  ): Promise<void> {
+  protected async cerrar(t: TrailerDto): Promise<void> {
     this.procesando.set(t.id);
     this.errorAccion.set(null);
     try {
-      await accion();
+      await this.api.cerrar(t.id);
       this.porCerrar.set(null);
-      this.aviso.set(exito);
-      this.trailers.reload();
+      this.aviso.set(`El viaje ${t.viaje ?? t.numero} se pasó a Cerrados.`);
+      this.trailers.reload(); // el trailer desaparece de esta pestaña
     } catch (error) {
       this.errorAccion.set({ id: t.id, mensaje: mensajeDeError(error) });
     } finally {

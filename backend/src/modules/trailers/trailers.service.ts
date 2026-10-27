@@ -6,6 +6,7 @@ import type {
   EstadoTrailer,
   ManifiestoLineaInput,
   TrailerDto,
+  PaginaTrailersCerradosDto
 } from "@abastos/shared";
 import type { Prisma } from "../../generated/prisma/client.js";
 import { prisma } from "../../lib/prisma.js";
@@ -57,6 +58,7 @@ function aDto(
 
   return {
     id: t.id,
+    viaje: t.viaje,
     placa: t.placa,
     numero: t.numero,
     invernadero: t.invernadero,
@@ -67,6 +69,7 @@ function aDto(
     descarga: aNumero(t.descarga),
     comisionPorcentaje: aNumero(t.comisionPorcentaje),
     fechaLlegada: t.fechaLlegada.toISOString(),
+    fechaCierre: t.fechaCierre?.toISOString() ?? null,
     estado: t.estado,
     manifiesto,
     totales: {
@@ -170,8 +173,60 @@ export async function cambiarEstado(
   estado: EstadoTrailer,
 ): Promise<TrailerDto> {
   await buscarOFallar(id);
-  await prisma.trailer.update({ where: { id }, data: { estado } });
+  await prisma.trailer.update({
+    where: { id },
+    // Al cerrar se guarda cuándo; al reabrir se borra.
+    data: { estado, fechaCierre: estado === "CERRADO" ? new Date() : null },
+  });
   return obtenerTrailer(id);
+}
+
+const POR_PAGINA = 20;
+
+export async function listarCerrados(
+  q: string | undefined,
+  desde: number,
+): Promise<PaginaTrailersCerradosDto> {
+  const busqueda = q
+    ? {
+        OR: (["viaje", "numero", "invernadero", "placa"] as const).map(
+          (campo) => ({
+            [campo]: { contains: q, mode: "insensitive" as const },
+          }),
+        ),
+      }
+    : {};
+
+  // Se pide uno de más para saber si hay otra página.
+  const filas = await prisma.trailer.findMany({
+    where: { estado: "CERRADO", ...busqueda },
+    orderBy: [{ fechaCierre: { sort: "desc", nulls: "last" } }, { id: "desc" }],
+    skip: desde,
+    take: POR_PAGINA + 1,
+    include: { manifiesto: { select: { id: true, cajas: true } } },
+  });
+  const pagina = filas.slice(0, POR_PAGINA);
+  const vendidas = await vendidasPorLinea(
+    pagina.flatMap((t) => t.manifiesto.map((l) => l.id)),
+  );
+
+  return {
+    trailers: pagina.map((t) => ({
+      id: t.id,
+      viaje: t.viaje,
+      numero: t.numero,
+      invernadero: t.invernadero,
+      placa: t.placa,
+      fechaLlegada: t.fechaLlegada.toISOString(),
+      fechaCierre: t.fechaCierre?.toISOString() ?? null,
+      cajas: t.manifiesto.reduce((acc, l) => acc + l.cajas, 0),
+      vendidas: t.manifiesto.reduce(
+        (acc, l) => acc + (vendidas.get(l.id) ?? 0),
+        0,
+      ),
+    })),
+    siguiente: filas.length > POR_PAGINA ? desde + POR_PAGINA : null,
+  };
 }
 
 // ---------- Correcciones al manifiesto ----------

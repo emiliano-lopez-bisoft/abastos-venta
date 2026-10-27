@@ -9,6 +9,7 @@ export const resumenDiaQuerySchema = z.object({
 
 export interface ResumenDiaTrailerDto {
   trailerId: number;
+  viaje: string | null;
   numero: string;
   invernadero: string;
   cajasVendidas: number;
@@ -59,12 +60,14 @@ export interface LiquidacionProductoDto {
 export interface LiquidacionTrailerDto {
   trailer: {
     id: number;
+    viaje: string | null;
     numero: string;
     placa: string;
     invernadero: string;
     chofer: string;
     anden: string;
     fechaLlegada: string;
+    fechaCierre: string | null;
     estado: "ACTIVO" | "CERRADO";
   };
   productos: LiquidacionProductoDto[];

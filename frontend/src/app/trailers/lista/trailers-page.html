@@ -18,7 +18,9 @@
   <p class="exito" role="status">{{ mensaje }}</p>
 }
 
-@if (trailers.error()) {
+@if (estado() === 'CERRADO') {
+  <app-trailers-cerrados />
+} @else if (trailers.error()) {
   <div class="aviso">
     <p>{{ mensajeDeError(trailers.error()) }}</p>
     <button type="button" class="boton boton--secundario" (click)="trailers.reload()">Volver a intentar</button>
@@ -30,9 +32,10 @@
     <article class="trailer">
       <div class="trailer__cabeza">
         <div>
-          <h2>{{ t.numero }}</h2>
+          <h2>{{ t.viaje ?? t.numero }}</h2>
           <p class="trailer__meta">
             <span>{{ t.invernadero }}</span>
+            <span>Trailer {{ t.numero }}</span>
             <span>Andén {{ t.anden }}</span>
             <span>Placa {{ t.placa }}</span>
           </p>
@@ -63,14 +66,8 @@
       <div class="trailer__pie">
         <a class="trailer__liquidacion" [routerLink]="['/trailers', t.id, 'liquidacion']">Ver liquidación</a>
 
-        @if (t.estado === 'ACTIVO') {
-          @if (porCerrar() !== t.id) {
-            <button type="button" class="boton boton--secundario" (click)="pedirCierre(t.id)">Cerrar trailer</button>
-          }
-        } @else {
-          <button type="button" class="boton boton--secundario" (click)="reabrir(t)" [disabled]="procesando() === t.id">
-            {{ procesando() === t.id ? 'Reabriendo…' : 'Reabrir' }}
-          </button>
+        @if (porCerrar() !== t.id) {
+          <button type="button" class="boton boton--secundario" (click)="pedirCierre(t.id)">Cerrar trailer</button>
         }
       </div>
 
@@ -102,12 +99,8 @@
     </article>
   } @empty {
     <div class="vacio">
-      @if (estado() === 'ACTIVO') {
-        <p>No hay trailers en el andén. Registra el siguiente cuando llegue.</p>
-        <a class="boton" routerLink="/trailers/nuevo">Registrar trailer</a>
-      } @else {
-        <p>Todavía no hay trailers cerrados.</p>
-      }
+      <p>No hay trailers en el andén. Registra el siguiente cuando llegue.</p>
+      <a class="boton" routerLink="/trailers/nuevo">Registrar trailer</a>
     </div>
   }
 }

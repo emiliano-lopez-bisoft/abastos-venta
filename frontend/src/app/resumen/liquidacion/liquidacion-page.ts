@@ -20,7 +20,7 @@ export class LiquidacionPage {
 
   protected readonly titulo = computed(() => {
     const t = this.liquidacion.value()?.trailer;
-    return t ? `Liquidación ${t.numero}` : 'Liquidación';
+    return t ? `Liquidación ${t.viaje ?? t.numero}` : 'Liquidación';
   });
 
   protected readonly colorDeChile = colorDeChile;

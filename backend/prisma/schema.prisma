@@ -22,6 +22,9 @@ enum EstadoTicket {
 /// Trailer que llega al andén con mercancía de un invernadero.
 model Trailer {
   id                 Int           @id @default(autoincrement())
+  /// Nombre del viaje (ej. HORTIFRESH-01). Opcional en la base solo porque
+  /// los trailers registrados antes de agregar el campo no lo tienen.
+  viaje              String?
   placa              String
   numero             String
   invernadero        String
@@ -34,6 +37,7 @@ model Trailer {
   /// Porcentaje de la venta que cobra el comercializador (10 = 10 %).
   comisionPorcentaje Decimal       @default(10) @map("comision_porcentaje") @db.Decimal(5, 2)
   fechaLlegada       DateTime      @default(now()) @map("fecha_llegada")
+  fechaCierre        DateTime?     @map("fecha_cierre")
   estado             EstadoTrailer @default(ACTIVO)
   createdAt          DateTime      @default(now()) @map("created_at")
   updatedAt          DateTime      @updatedAt @map("updated_at")
@@ -41,6 +45,7 @@ model Trailer {
   manifiesto ManifiestoDetalle[]
 
   @@index([fechaLlegada])
+  @@index([estado, fechaCierre])
   @@map("trailers")
 }
 

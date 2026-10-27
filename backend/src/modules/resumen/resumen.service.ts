@@ -36,7 +36,7 @@ export async function resumenDelDia(fecha = hoyCdmx()): Promise<ResumenDiaDto> {
             manifiestoDetalle: {
               select: {
                 trailer: {
-                  select: { id: true, numero: true, invernadero: true },
+                  select: { id: true, viaje: true, numero: true, invernadero: true },
                 },
               },
             },
@@ -66,6 +66,7 @@ export async function resumenDelDia(fecha = hoyCdmx()): Promise<ResumenDiaDto> {
       const acumulado = porTrailer.get(t.id) ?? {
         dto: {
           trailerId: t.id,
+          viaje: t.viaje,
           numero: t.numero,
           invernadero: t.invernadero,
           cajasVendidas: 0,
@@ -190,12 +191,14 @@ export async function liquidacionTrailer(
   return {
     trailer: {
       id: trailer.id,
+      viaje: trailer.viaje,
       numero: trailer.numero,
       placa: trailer.placa,
       invernadero: trailer.invernadero,
       chofer: trailer.chofer,
       anden: trailer.anden,
       fechaLlegada: trailer.fechaLlegada.toISOString(),
+      fechaCierre: trailer.fechaCierre?.toISOString() ?? null,
       estado: trailer.estado,
     },
     productos,
