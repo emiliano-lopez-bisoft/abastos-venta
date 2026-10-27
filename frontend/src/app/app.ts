@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { BarraEstadoPwa } from './core/pwa/barra-estado-pwa';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, BarraEstadoPwa],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })

@@ -6,9 +6,14 @@ import {
   DEFAULT_CURRENCY_CODE,
   LOCALE_ID,
   provideBrowserGlobalErrorListeners,
+  isDevMode,
+  provideAppInitializer,
+  inject,
 } from '@angular/core';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { routes } from './app.routes';
+import { provideServiceWorker } from '@angular/service-worker';
+import { ActualizacionesService } from './core/pwa/actualizaciones.service';
 
 registerLocaleData(localeEsMx);
 
@@ -19,5 +24,10 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withFetch()),
     { provide: LOCALE_ID, useValue: 'es-MX' },
     { provide: DEFAULT_CURRENCY_CODE, useValue: 'MXN' },
+    provideServiceWorker('ngsw-worker.js', {
+      enabled: !isDevMode(),
+      registrationStrategy: 'registerWhenStable:30000',
+    }),
+    provideAppInitializer(() => inject(ActualizacionesService).iniciar()),
   ],
 };
