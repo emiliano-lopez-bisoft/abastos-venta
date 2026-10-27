@@ -3,20 +3,33 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { formatearFolio } from '@abastos/shared';
 import { colorDeChile, nombreProducto } from '../../core/catalogos';
-import { mensajeDeError } from '../../core/errores';
+import { mensajeDeError, mensajeDeErrorAlGuardar } from '../../core/errores';
 import { sumarDias } from '../../core/fechas';
 import { ValesApi } from '../vales.api';
 import { hoyCdmx } from '../../core/fechas';
 import { SelectorDia } from '../../core/selector-dia';
+import { DatosGuardados } from '../../core/pwa/datos-guardados';
+import { AvisoConexionGuardar } from '../../core/pwa/aviso-conexion-guardar';
+import { ConexionService } from '../../core/pwa/conexion.service';
 
 @Component({
   selector: 'app-vales-page',
-  imports: [RouterLink, CurrencyPipe, DatePipe, DecimalPipe, SelectorDia],
+  imports: [
+    RouterLink,
+    CurrencyPipe,
+    DatePipe,
+    DecimalPipe,
+    SelectorDia,
+    DatosGuardados,
+    AvisoConexionGuardar,
+  ],
   templateUrl: './vales-page.html',
   styleUrl: './vales-page.scss',
 })
 export class ValesPage {
   private readonly api = inject(ValesApi);
+
+  protected readonly conexion = inject(ConexionService);
 
   protected readonly fecha = signal(hoyCdmx());
   protected readonly vales = this.api.listar(this.fecha);
@@ -58,7 +71,7 @@ export class ValesPage {
       this.porCancelar.set(null);
       this.vales.reload();
     } catch (error) {
-      this.errorCancelar.set(mensajeDeError(error));
+      this.errorCancelar.set(mensajeDeErrorAlGuardar(error));
     } finally {
       this.cancelando.set(false);
     }

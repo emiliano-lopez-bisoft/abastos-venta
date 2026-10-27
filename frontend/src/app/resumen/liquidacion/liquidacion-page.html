@@ -27,6 +27,7 @@
       Imprimir o guardar PDF
     </button>
   </header>
+  <app-datos-guardados [headers]="liquidacion.headers()" />
 
   @if (l.trailer.estado === 'ACTIVO') {
     <p class="pendiente">El trailer sigue en el andén: las cifras cambian con cada venta.</p>

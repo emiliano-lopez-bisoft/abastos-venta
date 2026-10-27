@@ -6,8 +6,10 @@ import { NOMBRES_PRODUCTOS, TAMANOS, coloresDe, crearTrailerSchema } from '@abas
 import { colorDeChile } from '../../core/catalogos';
 import { ErrorCampo } from '../../core/error-campo';
 import { esquemaParaBorrador } from '../../core/esquema-borrador';
-import { mensajeDeError } from '../../core/errores';
+import { mensajeDeError, mensajeDeErrorAlGuardar } from '../../core/errores';
 import { TrailersApi } from '../trailers.api';
+import { AvisoConexionGuardar } from '../../core/pwa/aviso-conexion-guardar';
+import { ConexionService } from '../../core/pwa/conexion.service';
 
 interface LineaForm {
   producto: string;
@@ -44,13 +46,14 @@ function lineaNueva(anterior?: LineaForm): LineaForm {
 
 @Component({
   selector: 'app-nuevo-trailer-page',
-  imports: [FormField, ErrorCampo, RouterLink, DecimalPipe],
+  imports: [FormField, ErrorCampo, RouterLink, DecimalPipe, AvisoConexionGuardar],
   templateUrl: './nuevo-trailer-page.html',
   styleUrl: './nuevo-trailer-page.scss',
 })
 export class NuevoTrailerPage {
   private readonly api = inject(TrailersApi);
   private readonly router = inject(Router);
+  protected readonly conexion = inject(ConexionService);
 
   protected readonly productos = NOMBRES_PRODUCTOS;
   protected readonly tamanos = TAMANOS;
@@ -108,7 +111,7 @@ export class NuevoTrailerPage {
         await this.api.crear(crearTrailerSchema.parse(this.modelo()));
         await this.router.navigate(['/trailers']);
       } catch (error) {
-        this.errorServidor.set(mensajeDeError(error));
+        this.errorServidor.set(mensajeDeErrorAlGuardar(error));
       }
       return undefined;
     });

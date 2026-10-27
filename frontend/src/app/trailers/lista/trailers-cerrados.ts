@@ -13,8 +13,10 @@ import {
   switchMap,
   tap,
 } from 'rxjs';
-import { mensajeDeError } from '../../core/errores';
+import { mensajeDeError, mensajeDeErrorAlGuardar } from '../../core/errores';
 import { TrailersApi } from '../trailers.api';
+import { AvisoConexionGuardar } from '../../core/pwa/aviso-conexion-guardar';
+import { ConexionService } from '../../core/pwa/conexion.service';
 
 interface Pedido {
   q: string;
@@ -24,12 +26,14 @@ interface Pedido {
 /** Pestaña "Cerrados": tarjetas compactas, búsqueda y "Ver más". */
 @Component({
   selector: 'app-trailers-cerrados',
-  imports: [RouterLink, DatePipe, DecimalPipe],
+  imports: [RouterLink, DatePipe, DecimalPipe, AvisoConexionGuardar],
   templateUrl: './trailers-cerrados.html',
   styleUrl: './trailers-cerrados.scss',
 })
 export class TrailersCerrados {
   private readonly api = inject(TrailersApi);
+
+  protected readonly conexion = inject(ConexionService);
 
   protected readonly busqueda = signal('');
   protected readonly trailers = signal<TrailerCerradoDto[]>([]);
@@ -109,7 +113,7 @@ export class TrailersCerrados {
       this.trailers.update((lista) => lista.filter((x) => x.id !== t.id));
       this.aviso.set(`El viaje ${t.viaje ?? t.numero} volvió al andén.`);
     } catch (e) {
-      this.error.set(mensajeDeError(e));
+      this.error.set(mensajeDeErrorAlGuardar(e));
     } finally {
       this.reabriendo.set(null);
     }

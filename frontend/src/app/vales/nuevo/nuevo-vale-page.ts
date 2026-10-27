@@ -18,9 +18,12 @@ import {
 } from '@abastos/shared';
 import { colorDeChile, nombreProducto } from '../../core/catalogos';
 import { ErrorCampo } from '../../core/error-campo';
-import { mensajeDeError } from '../../core/errores';
+import { mensajeDeError, mensajeDeErrorAlGuardar } from '../../core/errores';
 import { TrailersApi } from '../../trailers/trailers.api';
 import { ValesApi } from '../vales.api';
+import { DatosGuardados } from '../../core/pwa/datos-guardados';
+import { AvisoConexionGuardar } from '../../core/pwa/aviso-conexion-guardar';
+import { ConexionService } from '../../core/pwa/conexion.service';
 
 interface LineaVale {
   manifiestoDetalleId: number;
@@ -43,12 +46,22 @@ const valeVacio = (): ModeloVale => ({ clienteNombre: '', lineas: [] });
 
 @Component({
   selector: 'app-nuevo-vale-page',
-  imports: [FormField, ErrorCampo, RouterLink, CurrencyPipe, DatePipe, DecimalPipe],
+  imports: [
+    FormField,
+    ErrorCampo,
+    RouterLink,
+    CurrencyPipe,
+    DatePipe,
+    DecimalPipe,
+    DatosGuardados,
+    AvisoConexionGuardar,
+  ],
   templateUrl: './nuevo-vale-page.html',
   styleUrl: './nuevo-vale-page.scss',
 })
 export class NuevoValePage {
   private readonly valesApi = inject(ValesApi);
+  protected readonly conexion = inject(ConexionService);
 
   protected readonly hoy = new Date();
   protected readonly trailers = inject(TrailersApi).listar(signal('ACTIVO'));
@@ -130,7 +143,7 @@ export class NuevoValePage {
         this.guardado.set(vale);
         this.trailers.reload(); // actualiza las existencias para el siguiente vale
       } catch (error) {
-        this.errorServidor.set(mensajeDeError(error));
+        this.errorServidor.set(mensajeDeErrorAlGuardar(error));
       }
       return undefined;
     });

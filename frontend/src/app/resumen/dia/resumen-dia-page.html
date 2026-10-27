@@ -3,6 +3,8 @@
   <app-selector-dia [(fecha)]="fecha" />
 </header>
 
+<app-datos-guardados [headers]="resumen.headers()" />
+
 @if (resumen.error()) {
   <div class="aviso">
     <p>{{ mensajeDeError(resumen.error()) }}</p>

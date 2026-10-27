@@ -3,16 +3,21 @@
   <app-selector-dia [(fecha)]="fecha" />
 </header>
 
+<app-datos-guardados [headers]="vales.headers()" />
+
 @if (vales.error()) {
   <div class="aviso">
     <p>{{ mensajeDeError(vales.error()) }}</p>
-    <button type="button" class="boton boton--secundario" (click)="vales.reload()">Volver a intentar</button>
+    <button type="button" class="boton boton--secundario" (click)="vales.reload()">
+      Volver a intentar
+    </button>
   </div>
 } @else {
   <section class="resumen" aria-live="polite">
     <p>
-      <span class="cifra">{{ resumen().vales | number }}</span> {{ resumen().vales === 1 ? 'vale' : 'vales' }}
-      con <span class="cifra">{{ resumen().cajas | number }}</span> cajas
+      <span class="cifra">{{ resumen().vales | number }}</span>
+      {{ resumen().vales === 1 ? 'vale' : 'vales' }} con
+      <span class="cifra">{{ resumen().cajas | number }}</span> cajas
       @if (resumen().cancelados > 0) {
         <span class="resumen__cancelados">
           ({{ resumen().cancelados }} {{ resumen().cancelados === 1 ? 'cancelado' : 'cancelados' }})
@@ -25,7 +30,9 @@
   @for (v of vales.value(); track v.id) {
     <article class="vale" [class.vale--cancelado]="v.estado === 'CANCELADO'">
       <div class="vale__cabeza">
-        <p class="vale__folio">Folio <span class="cifra">{{ formatearFolio(v.id) }}</span></p>
+        <p class="vale__folio">
+          Folio <span class="cifra">{{ formatearFolio(v.id) }}</span>
+        </p>
         <p class="vale__hora">{{ v.fecha | date: 'h:mm a' }}</p>
         @if (v.estado === 'CANCELADO') {
           <p class="etiqueta">Cancelado</p>
@@ -42,35 +49,54 @@
               {{ nombreProducto(l.producto, l.color) }} <strong>{{ l.tamano }}</strong>
               <small>Trailer {{ l.trailer.numero }}</small>
             </span>
-            <span class="lineas__detalle">{{ l.cajas | number }} × {{ l.precioCaja | currency }}</span>
+            <span class="lineas__detalle"
+              >{{ l.cajas | number }} × {{ l.precioCaja | currency }}</span
+            >
             <span class="cifra lineas__importe">{{ l.subtotal | currency }}</span>
           </li>
         }
       </ul>
 
       <div class="vale__pie">
-        <p class="vale__total">Total <span class="cifra">{{ v.total | currency }}</span></p>
+        <p class="vale__total">
+          Total <span class="cifra">{{ v.total | currency }}</span>
+        </p>
 
         @if (v.estado === 'VIGENTE') {
           @if (porCancelar() === v.id) {
-            <div class="confirmar" role="alertdialog" [attr.aria-label]="'Cancelar folio ' + formatearFolio(v.id)">
+            <div
+              class="confirmar"
+              role="alertdialog"
+              [attr.aria-label]="'Cancelar folio ' + formatearFolio(v.id)"
+            >
               <p>Las {{ v.totalCajas | number }} cajas vuelven a quedar disponibles.</p>
               @if (errorCancelar(); as error) {
                 <p class="aviso">{{ error }}</p>
               }
               <div class="confirmar__botones">
-                <button type="button" class="boton boton--secundario" (click)="porCancelar.set(null)"
-                  [disabled]="cancelando()">
+                <button
+                  type="button"
+                  class="boton boton--secundario"
+                  (click)="porCancelar.set(null)"
+                  [disabled]="cancelando()"
+                >
                   No cancelar
                 </button>
-                <button type="button" class="boton boton--confirmar-peligro" (click)="cancelar(v.id)"
-                  [disabled]="cancelando()">
+                <button
+                  type="button"
+                  class="boton boton--confirmar-peligro"
+                  (click)="cancelar(v.id)"
+                  [disabled]="cancelando()"
+                >
                   {{ cancelando() ? 'Cancelando…' : 'Sí, cancelar vale' }}
                 </button>
               </div>
+              <app-aviso-conexion-guardar />
             </div>
           } @else {
-            <button type="button" class="boton boton--peligro" (click)="pedirConfirmacion(v.id)">Cancelar vale</button>
+            <button type="button" class="boton boton--peligro" (click)="pedirConfirmacion(v.id)">
+              Cancelar vale
+            </button>
           }
         }
       </div>

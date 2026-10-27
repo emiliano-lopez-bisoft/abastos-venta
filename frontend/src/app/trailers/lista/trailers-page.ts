@@ -3,9 +3,12 @@ import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import type { EstadoTrailer, ManifiestoLineaDto, TrailerDto } from '@abastos/shared';
 import { colorDeChile, nombreProducto } from '../../core/catalogos';
-import { mensajeDeError } from '../../core/errores';
+import { mensajeDeError, mensajeDeErrorAlGuardar } from '../../core/errores';
 import { TrailersApi } from '../trailers.api';
 import { TrailersCerrados } from './trailers-cerrados';
+import { DatosGuardados } from '../../core/pwa/datos-guardados';
+import { AvisoConexionGuardar } from '../../core/pwa/aviso-conexion-guardar';
+import { ConexionService } from '../../core/pwa/conexion.service';
 
 interface SegmentoExistencia {
   color: string;
@@ -14,12 +17,14 @@ interface SegmentoExistencia {
 
 @Component({
   selector: 'app-trailers-page',
-  imports: [RouterLink, DecimalPipe, TrailersCerrados],
+  imports: [RouterLink, DecimalPipe, TrailersCerrados, DatosGuardados, AvisoConexionGuardar],
   templateUrl: './trailers-page.html',
   styleUrl: './trailers-page.scss',
 })
 export class TrailersPage {
   private readonly api = inject(TrailersApi);
+
+  protected readonly conexion = inject(ConexionService);
 
   /** Pestaña visible. Los cerrados se manejan en su propio componente. */
   protected readonly estado = signal<EstadoTrailer>('ACTIVO');
@@ -75,7 +80,7 @@ export class TrailersPage {
       this.aviso.set(`El viaje ${t.viaje ?? t.numero} se pasó a Cerrados.`);
       this.trailers.reload(); // el trailer desaparece de esta pestaña
     } catch (error) {
-      this.errorAccion.set({ id: t.id, mensaje: mensajeDeError(error) });
+      this.errorAccion.set({ id: t.id, mensaje: mensajeDeErrorAlGuardar(error) });
     } finally {
       this.procesando.set(null);
     }

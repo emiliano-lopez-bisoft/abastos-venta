@@ -5,10 +5,11 @@ import { formatearFolio } from '@abastos/shared';
 import { colorDeChile } from '../../core/catalogos';
 import { mensajeDeError } from '../../core/errores';
 import { ResumenApi } from '../resumen.api';
+import { DatosGuardados } from '../../core/pwa/datos-guardados';
 
 @Component({
   selector: 'app-liquidacion-page',
-  imports: [RouterLink, CurrencyPipe, DatePipe, DecimalPipe],
+  imports: [RouterLink, CurrencyPipe, DatePipe, DecimalPipe, DatosGuardados],
   templateUrl: './liquidacion-page.html',
   styleUrl: './liquidacion-page.scss',
 })

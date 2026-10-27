@@ -1,11 +1,15 @@
 <header class="encabezado">
   <h1>Nuevo vale</h1>
-  <p class="fecha">{{ hoy | date: 'EEEE d \'de\' MMMM' }}</p>
+  <p class="fecha">{{ hoy | date: "EEEE d 'de' MMMM" }}</p>
 </header>
+
+<app-datos-guardados [headers]="trailers.headers()" />
 
 @if (guardado(); as vale) {
   <section class="listo" aria-live="polite">
-    <p class="listo__folio">Folio <span class="cifra">{{ formatearFolio(vale.id) }}</span></p>
+    <p class="listo__folio">
+      Folio <span class="cifra">{{ formatearFolio(vale.id) }}</span>
+    </p>
     <h2>Vale guardado para {{ vale.clienteNombre }}</h2>
 
     <ul class="listo__lineas">
@@ -19,14 +23,19 @@
       }
     </ul>
 
-    <p class="listo__total">Total <span class="cifra">{{ vale.total | currency }}</span></p>
+    <p class="listo__total">
+      Total <span class="cifra">{{ vale.total | currency }}</span>
+    </p>
 
     <button type="button" class="boton boton--ancho" (click)="nuevoVale()">Hacer otro vale</button>
   </section>
 } @else {
   <form class="vale" novalidate (submit)="guardar($event)">
     <div class="vale__captura">
-      <label class="campo" [class.campo--error]="f.clienteNombre().touched() && f.clienteNombre().invalid()">
+      <label
+        class="campo"
+        [class.campo--error]="f.clienteNombre().touched() && f.clienteNombre().invalid()"
+      >
         <span>Cliente</span>
         <input [formField]="f.clienteNombre" autocomplete="off" autocapitalize="words" />
         <app-error-campo [campo]="f.clienteNombre" />
@@ -39,21 +48,45 @@
           @let producto = disponibles().get(linea.manifiestoDetalleId().value());
           <div class="renglon" [style.--color-linea]="colorDeChile(producto?.linea?.color)">
             <div class="renglon__nombre">
-              <strong>{{ nombreProducto(producto?.linea?.producto ?? '', producto?.linea?.color) }} {{ producto?.linea?.tamano }}</strong>
-              <span>Trailer {{ producto?.trailer?.numero }}, quedan {{ producto?.linea?.disponibles | number }}</span>
+              <strong
+                >{{ nombreProducto(producto?.linea?.producto ?? '', producto?.linea?.color) }}
+                {{ producto?.linea?.tamano }}</strong
+              >
+              <span
+                >Trailer {{ producto?.trailer?.numero }}, quedan
+                {{ producto?.linea?.disponibles | number }}</span
+              >
             </div>
-            <label class="campo" [class.campo--error]="linea.cajas().touched() && linea.cajas().invalid()">
+            <label
+              class="campo"
+              [class.campo--error]="linea.cajas().touched() && linea.cajas().invalid()"
+            >
               <span>Cajas</span>
-              <input type="number" [formField]="linea.cajas" inputmode="numeric" (focus)="seleccionar($event)" />
+              <input
+                type="number"
+                [formField]="linea.cajas"
+                inputmode="numeric"
+                (focus)="seleccionar($event)"
+              />
               <app-error-campo [campo]="linea.cajas" />
             </label>
-            <label class="campo" [class.campo--error]="linea.precioCaja().touched() && linea.precioCaja().invalid()">
+            <label
+              class="campo"
+              [class.campo--error]="linea.precioCaja().touched() && linea.precioCaja().invalid()"
+            >
               <span>Precio por caja</span>
-              <input type="number" [formField]="linea.precioCaja" inputmode="decimal" (focus)="seleccionar($event)" />
+              <input
+                type="number"
+                [formField]="linea.precioCaja"
+                inputmode="decimal"
+                (focus)="seleccionar($event)"
+              />
               <app-error-campo [campo]="linea.precioCaja" />
             </label>
             <p class="renglon__importe cifra">{{ importe(linea().value()) | currency }}</p>
-            <button type="button" class="boton boton--peligro renglon__quitar" (click)="quitar(i)">Quitar</button>
+            <button type="button" class="boton boton--peligro renglon__quitar" (click)="quitar(i)">
+              Quitar
+            </button>
           </div>
         } @empty {
           <p class="vacio">Toca un producto de la lista para agregarlo al vale.</p>
@@ -69,17 +102,28 @@
       @if (trailers.error()) {
         <div class="aviso">
           <p>{{ mensajeDeError(trailers.error()) }}</p>
-          <button type="button" class="boton boton--secundario" (click)="trailers.reload()">Volver a intentar</button>
+          <button type="button" class="boton boton--secundario" (click)="trailers.reload()">
+            Volver a intentar
+          </button>
         </div>
       } @else {
         @for (t of trailers.value(); track t.id) {
           <div class="disponibles__trailer">
-            <h3>Trailer {{ t.numero }} <span>Andén {{ t.anden }}</span></h3>
+            <h3>
+              Trailer {{ t.numero }} <span>Andén {{ t.anden }}</span>
+            </h3>
             @for (l of t.manifiesto; track l.id) {
-              <button type="button" class="opcion" [style.--color-linea]="colorDeChile(l.color)"
-                [disabled]="l.disponibles === 0 || enVale(l.id)" (click)="agregar(l.id)">
+              <button
+                type="button"
+                class="opcion"
+                [style.--color-linea]="colorDeChile(l.color)"
+                [disabled]="l.disponibles === 0 || enVale(l.id)"
+                (click)="agregar(l.id)"
+              >
                 <span class="punto"></span>
-                <span>{{ nombreProducto(l.producto, l.color) }} <strong>{{ l.tamano }}</strong></span>
+                <span
+                  >{{ nombreProducto(l.producto, l.color) }} <strong>{{ l.tamano }}</strong></span
+                >
                 <span class="opcion__quedan">
                   @if (enVale(l.id)) {
                     En el vale
@@ -106,11 +150,14 @@
         <p class="aviso" role="alert">{{ error }}</p>
       }
       <div class="pie__fila">
-        <p class="pie__total">Total <span class="cifra">{{ total() | currency }}</span></p>
-        <button type="submit" class="boton" [disabled]="f().submitting()">
+        <p class="pie__total">
+          Total <span class="cifra">{{ total() | currency }}</span>
+        </p>
+        <button type="submit" class="boton" [disabled]="f().submitting() || !conexion.enLinea()">
           {{ f().submitting() ? 'Guardando…' : 'Guardar vale' }}
         </button>
       </div>
+      <app-aviso-conexion-guardar />
     </div>
   </form>
 }

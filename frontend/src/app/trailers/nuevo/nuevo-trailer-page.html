@@ -185,7 +185,12 @@
     <p class="aviso" role="alert">{{ error }}</p>
   }
 
-  <button type="submit" class="boton boton--ancho guardar" [disabled]="f().submitting()">
+  <button
+    type="submit"
+    class="boton boton--ancho guardar"
+    [disabled]="f().submitting() || !conexion.enLinea()"
+  >
     {{ f().submitting() ? 'Guardando…' : 'Guardar trailer' }}
   </button>
+  <app-aviso-conexion-guardar />
 </form>

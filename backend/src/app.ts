@@ -9,7 +9,7 @@ import { resumenRouter } from "./modules/resumen/resumen.routes.js";
 
 export const app = express();
 
-app.use(cors({ origin: env.CORS_ORIGIN }));
+app.use(cors({ origin: env.CORS_ORIGIN, exposedHeaders: ["Date"] }));
 app.use(express.json());
 
 app.use("/api/health", healthRouter);
