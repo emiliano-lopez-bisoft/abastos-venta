@@ -1,0 +1,12 @@
+{
+  "$schema": "https://railway.com/railway.schema.json",
+  "build": {
+    "buildCommand": "npm run build"
+  },
+  "deploy": {
+    "startCommand": "npm run start -w backend",
+    "preDeployCommand": ["npm run db:deploy -w backend"],
+    "healthcheckPath": "/api/health",
+    "restartPolicyType": "ON_FAILURE"
+  }
+}
