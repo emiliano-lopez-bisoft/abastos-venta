@@ -1,11 +1,34 @@
+@if (auth.autenticado()) {
+  <header class="barra-app">
+    <span class="barra-app__titulo">Ventas Abastos</span>
+    <a
+      routerLink="/ajustes"
+      routerLinkActive="activa"
+      ariaCurrentWhenActive="page"
+      class="barra-app__ajustes"
+      aria-label="Ajustes"
+    >
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+        <circle cx="12" cy="12" r="8" stroke-width="3.5" stroke-dasharray="3.1 3.18" />
+        <circle cx="12" cy="12" r="6" stroke-width="2" />
+        <circle cx="12" cy="12" r="2.25" stroke-width="2" />
+      </svg>
+    </a>
+  </header>
+}
+
 <app-barra-estado-pwa />
 
 <main class="contenido">
   <router-outlet />
 </main>
 
-<nav class="navegacion" aria-label="Secciones">
-  @for (s of secciones; track s.ruta) {
-    <a [routerLink]="s.ruta" routerLinkActive="activa" ariaCurrentWhenActive="page">{{ s.texto }}</a>
-  }
-</nav>
+@if (auth.autenticado()) {
+  <nav class="navegacion" aria-label="Secciones">
+    @for (s of secciones; track s.ruta) {
+      <a [routerLink]="s.ruta" routerLinkActive="activa" ariaCurrentWhenActive="page">{{
+        s.texto
+      }}</a>
+    }
+  </nav>
+}

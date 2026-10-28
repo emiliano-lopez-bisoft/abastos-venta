@@ -1,0 +1,62 @@
+<main class="login">
+  <h1>Ventas Abastos</h1>
+
+  <form (submit)="entrar($event)" novalidate>
+    <label class="campo">
+      <span>Usuario</span>
+      <input
+        type="text"
+        name="usuario"
+        autocomplete="username"
+        autocapitalize="none"
+        autocorrect="off"
+        spellcheck="false"
+        [value]="usuario()"
+        (input)="usuario.set(valor($event))"
+      />
+    </label>
+
+    <label class="campo">
+      <span>Contraseña</span>
+      <div class="contrasena">
+        <input
+          [type]="mostrarContrasena() ? 'text' : 'password'"
+          name="contrasena"
+          autocomplete="current-password"
+          autocapitalize="none"
+          autocorrect="off"
+          spellcheck="false"
+          [value]="contrasena()"
+          (input)="contrasena.set(valor($event))"
+        />
+        <button
+          type="button"
+          class="ver"
+          [attr.aria-label]="mostrarContrasena() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+          [attr.aria-pressed]="mostrarContrasena()"
+          (click)="mostrarContrasena.set(!mostrarContrasena())"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z" />
+            <circle cx="12" cy="12" r="3" />
+            @if (mostrarContrasena()) {
+              <path d="M3 3l18 18" />
+            }
+          </svg>
+        </button>
+      </div>
+    </label>
+
+    @if (error(); as mensaje) {
+      <p class="error" role="alert">{{ mensaje }}</p>
+    }
+    @if (!conexion.enLinea()) {
+      <p class="aviso">Sin conexión. Necesitas internet para entrar.</p>
+    }
+
+    <button type="submit" class="boton boton--ancho" [disabled]="enviando() || !conexion.enLinea()">
+      {{ enviando() ? 'Entrando…' : 'Entrar' }}
+    </button>
+  </form>
+</main>

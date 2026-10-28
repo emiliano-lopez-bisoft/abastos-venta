@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { BarraEstadoPwa } from './core/pwa/barra-estado-pwa';
+import { AuthService } from './core/auth/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -9,6 +10,8 @@ import { BarraEstadoPwa } from './core/pwa/barra-estado-pwa';
   styleUrl: './app.scss',
 })
 export class App {
+  protected readonly auth = inject(AuthService);
+
   protected readonly secciones = [
     { ruta: '/trailers', texto: 'Trailers' },
     { ruta: '/vender', texto: 'Vender' },

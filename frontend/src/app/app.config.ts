@@ -16,6 +16,8 @@ import { provideServiceWorker } from '@angular/service-worker';
 import { ActualizacionesService } from './core/pwa/actualizaciones.service';
 import { sinConexionInterceptor } from './core/pwa/sin-conexion.interceptor';
 import { PrecargaService } from './core/pwa/precarga.service';
+import { authInterceptor } from './core/auth/auth.interceptor';
+import { AuthService } from './core/auth/auth.service';
 
 registerLocaleData(localeEsMx);
 
@@ -23,7 +25,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes, withComponentInputBinding()),
-    provideHttpClient(withFetch(), withInterceptors([sinConexionInterceptor])),
+    provideHttpClient(withFetch(), withInterceptors([sinConexionInterceptor, authInterceptor])),
     { provide: LOCALE_ID, useValue: 'es-MX' },
     { provide: DEFAULT_CURRENCY_CODE, useValue: 'MXN' },
     provideServiceWorker('ngsw-worker.js', {
@@ -31,6 +33,11 @@ export const appConfig: ApplicationConfig = {
       registrationStrategy: 'registerWhenStable:30000',
     }),
     provideAppInitializer(() => inject(ActualizacionesService).iniciar()),
-    provideAppInitializer(() => inject(PrecargaService).iniciar())
+    provideAppInitializer(async () => {
+      const auth = inject(AuthService);
+      const precarga = inject(PrecargaService);
+      await auth.verificarSesion();
+      if (auth.autenticado()) void precarga.iniciar();
+    }),
   ],
 };

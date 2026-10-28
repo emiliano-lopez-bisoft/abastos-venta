@@ -34,6 +34,38 @@
   }
 }
 
+.barra-app {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.25rem 0.25rem 0.25rem 1rem;
+  background: var(--superficie);
+  border-bottom: 1px solid var(--linea);
+}
+
+.barra-app__titulo {
+  font: 700 1.125rem var(--fuente-cifras);
+}
+
+.barra-app__ajustes {
+  display: grid;
+  place-items: center;
+  width: var(--toque);
+  height: var(--toque);
+  border-radius: var(--radio);
+  color: var(--tinta-suave);
+}
+
+.barra-app__ajustes.activa {
+  color: var(--primario);
+}
+
+.barra-app__ajustes svg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
 // Al imprimir (por ejemplo, la liquidación) solo sale el contenido.
 @media print {
   .contenido {

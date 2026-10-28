@@ -1,0 +1,39 @@
+<header>
+  <h1>Ajustes</h1>
+</header>
+
+<section class="bloque" aria-labelledby="titulo-cuenta">
+  <h2 id="titulo-cuenta">Cuenta</h2>
+  <p>Sesión iniciada como <strong>{{ auth.usuario() }}</strong></p>
+
+  @if (!confirmando()) {
+    <button type="button" class="boton boton--secundario boton--ancho" (click)="confirmando.set(true)">
+      Cerrar sesión
+    </button>
+  } @else {
+    <div class="confirmacion">
+      <p><strong>¿Cerrar sesión?</strong></p>
+
+      @if (!conexion.enLinea()) {
+        <p class="aviso">Sin conexión. Podrás cerrar sesión cuando regrese la señal.</p>
+      }
+      @if (error(); as mensaje) {
+        <p class="error" role="alert">{{ mensaje }}</p>
+      }
+
+      <div class="acciones">
+        <button type="button" class="boton boton--secundario" [disabled]="saliendo()" (click)="cancelar()">
+          Cancelar
+        </button>
+        <button
+          type="button"
+          class="boton boton--secundario boton--peligro"
+          [disabled]="saliendo() || !conexion.enLinea()"
+          (click)="salir()"
+        >
+          {{ saliendo() ? 'Cerrando…' : 'Sí, cerrar sesión' }}
+        </button>
+      </div>
+    </div>
+  }
+</section>

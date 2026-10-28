@@ -1,0 +1,62 @@
+.login {
+  max-width: 24rem;
+  margin: 12vh auto 0;
+  padding: 0 1rem;
+}
+
+.login h1 {
+  margin-bottom: 1.5rem;
+}
+
+form {
+  display: grid;
+  gap: 1rem;
+}
+
+/* Campo de contraseña con el botón del ojo encima, a la derecha */
+.contrasena {
+  position: relative;
+}
+
+.contrasena input {
+  padding-right: var(--toque);
+}
+
+/* Oculta el ojo propio de Edge para que no haya dos */
+.contrasena input::-ms-reveal,
+.contrasena input::-ms-clear {
+  display: none;
+}
+
+.ver {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: var(--toque);
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: var(--radio);
+  background: transparent;
+  color: var(--tinta-suave);
+  cursor: pointer;
+}
+
+.ver svg {
+  width: 1.375rem;
+  height: 1.375rem;
+}
+
+.error {
+  margin: 0;
+  padding: 0.75rem;
+  border-radius: var(--radio-chico);
+  background: var(--peligro-fondo);
+  color: var(--peligro);
+}
+
+.aviso {
+  margin: 0;
+  color: var(--tinta-suave);
+}
