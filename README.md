@@ -2,7 +2,7 @@
 
 App web (PWA) para registrar las ventas de chile que hace el tío desde el andén en la Central de Abastos de la CDMX. Sustituye los vales escritos a mano y la hoja de Excel con la que se liquida cada viaje a los jefes.
 
-> Estado al 28 de octubre de 2026: funciones base terminadas, soporte sin conexión (niveles 1 y 2) terminado, login terminado y probado. **Aún no hay deploy.**
+> Estado al 29 de octubre de 2026: funciones base terminadas, soporte sin conexión (niveles 1 y 2) terminado, login terminado y probado. **Se está realizando un deploy demo**
 
 ---
 
@@ -381,6 +381,7 @@ npm run usuario:crear -w backend
 Pide usuario y contraseña (mínimo 10 caracteres, sin mostrarla en pantalla) y la confirmación. Si el usuario ya existe, **cambia su contraseña y cierra todas sus sesiones**, útil si se pierde el iPhone. Las credenciales nunca van en el `.env`, en notas ni en el repo: se guardan en un gestor de contraseñas.
 
 **Frontend**
+
 
 - `AuthService`: signal del usuario actual. Al arrancar llama a `GET /api/auth/yo` con el header `ngsw-bypass` para que el service worker nunca responda desde caché.
 - Sin red al abrir la app, se usa el nombre guardado en `localStorage` del último login (`abastos.usuario`). Es solo el nombre; la sesión real vive en la cookie.
