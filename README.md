@@ -2,7 +2,7 @@
 
 App web (PWA) para registrar las ventas de chile que hace el tío desde el andén en la Central de Abastos de la CDMX. Sustituye los vales escritos a mano y la hoja de Excel con la que se liquida cada viaje a los jefes.
 
-> Estado al 29 de octubre de 2026: funciones base terminadas, soporte sin conexión (niveles 1 y 2) terminado, login terminado y probado. **Se está realizando un deploy demo**
+> Estado al 29 de octubre de 2026: funciones base terminadas, soporte sin conexión (niveles 1 y 2) terminado, login terminado y probado. **Se está realizando un deploy demo en railway con plan Free**
 
 ---
 
